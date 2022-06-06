@@ -1,7 +1,11 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useContext, useEffect } from 'react'
+import { Context } from '../context/Context'
+import { Student, getStudent, createStudent } from '../data/Students'
 import validator from 'validator'
+import { v4 as uuidv4 } from "uuid"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from '../firebase'
+import { v4 } from 'uuid'
 
 function LoginComponent(props) {
     const [signUp, setSignUp] = useState(false)
@@ -14,6 +18,14 @@ function LoginComponent(props) {
     const signInEmailRef = useRef(null)
     const signInPasswordRef = useRef(null)
 
+    const { setUser } = useContext(Context)
+
+    /**
+     * Validates the input contents for the sign up form
+     * 
+     * @param { name, email, password, passwordRepeat} formData 
+     * @returns boolean
+     */
     const validateSignUp = ({ name, email, password, passwordRepeat }) => {
         if (!name || !email || !password || !passwordRepeat) {
             return false
@@ -38,6 +50,11 @@ function LoginComponent(props) {
         return true
     }
 
+    /**
+     * Handles the sign up form submission
+     * 
+     * @param {e} e 
+     */
     const handleSignUp = (e) => {
         e.preventDefault()
 
@@ -49,28 +66,46 @@ function LoginComponent(props) {
         if (validateSignUp({ name, email, password, passwordRepeat })) {
             createUserWithEmailAndPassword(auth, email, password)
                 .then(() => {
-                    alert("Account has been created! Please sign in.")
-                    setSignUp(false)
+                    // ToDo: create anonymous name generation
+                    const student = new Student(uuidv4(), name, email, null, false, [], 1, [])
+
+                    // ToDo: if student already exists, do not create new student
+                    createStudent(student).then((result) => {
+                        if (result == false) {
+                            alert('Student already exists. Please use your own email address.')
+                        } else {
+                            setUser(student)
+                            alert("Account has been created! You are now signed in.")
+                            setSignUp(false)
+                        }
+                    })
                 })
                 .catch((error) => {
-                    alert(error)
                     alert(error.message)
                 })
 
         } else {
             alert('Invalid sign up')
         }
+
+        // create uuid for user
+        const userId = uuidv4()
+        console.log("User id:" + userId)
     }
 
-    const handleLogin = (e) => {
+    const handleSignIn = (e) => {
         e.preventDefault()
 
+        const email = emailRef.current.value
+        const password = passwordRef.current.value
+
         // Do firebase login
-        signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value)
+        signInWithEmailAndPassword(auth, email, password)
             .then(() => {
-                // login worked
-            }
-            )
+                getStudent(email).then((student) => {
+                    setUser(student)
+                })
+            })
             .catch((error) => {
                 // login error
                 alert(error.message)
@@ -104,7 +139,7 @@ function LoginComponent(props) {
                     </p>
                     <input type="email" id="inputEmail" className="form-control input-sm mb-2" placeholder="Email address" required="True" ref={signInEmailRef} />
                     <input type="password" id="inputPassword" className="form-control input-sm mb-2" placeholder="Password" required="True" ref={signInPasswordRef} />
-                    <button className="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    <button className="btn btn-lg btn-primary btn-block" type="submit" onClick={handleSignIn}>Sign in</button>
                 </form>
             </div>
         )
