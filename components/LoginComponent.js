@@ -3,7 +3,7 @@ import Context from '../context/Context'
 import { Student, getStudent, createStudent } from '../data/Students'
 import validator from 'validator'
 import { v4 as uuidv4 } from "uuid"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
 import { auth } from '../firebase'
 import { v4 } from 'uuid'
 
@@ -50,6 +50,22 @@ function LoginComponent(props) {
         return true
     }
 
+    const validateSignIn = ({ email, password }) => {
+        if (!email || !password) {
+            return false
+        }
+
+        if (!validator.isEmail(email)) {
+            return false
+        }
+
+        if (!email.endsWith('@sfu.ca')) {
+            return false
+        }
+
+        return true
+    }
+
     /**
      * Handles the sign up form submission
      * 
@@ -86,12 +102,8 @@ function LoginComponent(props) {
                 })
 
         } else {
-            alert('Invalid sign up')
+            alert('Please ensure that your email is @sfu.ca and that your password is at least 6 characters long.')
         }
-
-        // create uuid for user
-        const userId = uuidv4()
-        console.log("User id:" + userId)
     }
 
     const handleSignIn = (e) => {
@@ -100,21 +112,31 @@ function LoginComponent(props) {
         const email = signInEmailRef.current.value
         const password = signInPasswordRef.current.value
 
-        // Do firebase login
-        signInWithEmailAndPassword(auth, email, password)
+        if (validateSignIn({ email, password })) {
+            // Do firebase login
+            signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 getStudent(email).then((student) => {
                     localStorage.setItem('auth', JSON.stringify(student))
                     setUser(student)
-
-                    alert("Logged in!")
                 })
             })
             .catch((error) => {
                 // login error
+                // ToDo: handle error message
                 alert(error.message)
-            }
-        )
+            })
+        } else {
+            alert('Please ensure that your email is @sfu.ca.')
+        }
+    }
+
+    const handleForgotPassword = (e) => {
+        e.preventDefault()
+
+        sendPasswordResetEmail(auth, signInEmailRef.current.value).then(() => {
+            alert("Password reset email sent. Please check your email.")
+        })
     }
 
     if (signUp) {
@@ -140,6 +162,9 @@ function LoginComponent(props) {
                     <h1 className="h3 font-weight-normal">Please Sign In</h1>
                     <p className="mb-3 text-muted">
                         Don't have an account? <a href="#" onClick={() => setSignUp(true)}>Sign up</a>.
+                    </p>
+                    <p className="mb-3 text-muted">
+                        Forgot password? Type your email below and click <a href="#" onClick={handleForgotPassword}>here</a>.
                     </p>
                     <input type="email" id="inputEmail" className="form-control input-sm mb-2" placeholder="Email address" required="True" ref={signInEmailRef} />
                     <input type="password" id="inputPassword" className="form-control input-sm mb-2" placeholder="Password" required="True" ref={signInPasswordRef} />
