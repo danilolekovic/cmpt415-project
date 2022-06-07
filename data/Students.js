@@ -1,6 +1,11 @@
 import { db } from '../firebase'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 
+/**
+ * Represents a student in the system
+ * 
+ * @typedef {Object} Student
+ */
 export class Student {
     constructor(uuid, name, email, anonymousName, isAnonymous, achievements, level, friends) {
         this.uuid = uuid
@@ -14,6 +19,10 @@ export class Student {
     }
 }
 
+/**
+ * Converts between the Student class schema and
+ * the firebase schema
+ */
 const studentConverter = {
     toFirestore: function (student) {
         return {
@@ -33,6 +42,11 @@ const studentConverter = {
     }
 }
 
+/**
+ * Returns a studen by email
+ * @param {string} email 
+ * @returns Student
+ */
 export async function getStudent(email) {
     const q = query(collection(db, "students"), where("email", "==", email))
 
@@ -45,6 +59,11 @@ export async function getStudent(email) {
     return studentConverter.fromFirestore(querySnapshot.docs[0], { idField: "uuid" })
 }
 
+/**
+ * Creates a new student
+ * @param {Student} student 
+ * @returns Student if created, false if already exists
+ */
 export async function createStudent(student) {
     const q = query(collection(db, "students"), where("email", "==", student.email))
 

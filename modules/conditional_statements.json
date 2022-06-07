@@ -1,0 +1,34 @@
+{
+    "index": 0,
+    "name": "Conditional Statements",
+    "description": "Covers conditional statements in Python; if statements",
+    "body": [
+        {
+            "type": "header",
+            "level": "2",
+            "value": "Nested Conditionals"
+        },
+        {
+            "type": "html",
+            "value": "One conditional can also be <b>nested</b> within another. For example, assume we have two integer variables, <code>x</code> and <code>y</code>. The following pattern of selection shows how we might decide how they are related to each other.<br/>"
+        },
+        {
+            "type": "code",
+            "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\t\telse:\n\t\tprint(\"x and y must be equal\")"
+        },
+        {
+            "type": "html",
+            "value": "The outer conditional contains two branches. The second branch (the else from the outer) contains another <code>if</code> statement, which has two branches of its own. Those two branches could contain conditional statements as well."  
+        },
+        {
+            "type": "exercise",
+            "code": "x = 10\ny = 10\nif x < y:\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\t\telse:\n\t\tprint(\"x and y must be equal\")",
+            "regex": [
+                {
+                    "pattern": "",
+                    "matches": 1
+                }
+            ]
+        }
+    ]
+}
