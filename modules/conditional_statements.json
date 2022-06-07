@@ -10,15 +10,16 @@
         },
         {
             "type": "html",
-            "value": "One conditional can also be <b>nested</b> within another. For example, assume we have two integer variables, <code>x</code> and <code>y</code>. The following pattern of selection shows how we might decide how they are related to each other.<br/>"
+            "value": "One conditional can also be nested within another. For example, assume we have two integer variables, x and y. The following pattern of selection shows how we might decide how they are related to each other."
         },
         {
             "type": "code",
-            "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\t\telse:\n\t\tprint(\"x and y must be equal\")"
+            "name": "conditional-statements-example-1",
+            "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\telse:\n\t\tprint(\"x and y must be equal\")"
         },
         {
             "type": "html",
-            "value": "The outer conditional contains two branches. The second branch (the else from the outer) contains another <code>if</code> statement, which has two branches of its own. Those two branches could contain conditional statements as well."  
+            "value": "The outer conditional contains two branches. The second branch (the else from the outer) contains another if statement, which has two branches of its own. Those two branches could contain conditional statements as well."  
         },
         {
             "type": "exercise",

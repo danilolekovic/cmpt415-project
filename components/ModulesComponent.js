@@ -1,18 +1,17 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import Context from '../context/Context'
 import RecentActivityComponent from './RecentActivityComponent'
-import { parseModuleJson } from '../utilities/moduleParser'
 import conditionalStatementsJson from '../modules/conditional_statements.json'
 import OpenModuleComponent from './OpenModuleComponent'
+import AchievementsListComponent from './AchivementsListComponent'
 
 function ModulesComponent() {
+    const [moduleContents, setModuleContents] = useState(null)
     const { openedModule, setOpenedModule } = useContext(Context)
 
     const handleModuleStart = (e) => {
         const module = e.currentTarget.getAttribute('module')
         let content;
-
-        console.log(module)
 
         if (module === 'conditional_statements') {
             content = conditionalStatementsJson
@@ -20,18 +19,23 @@ function ModulesComponent() {
             return
         }
 
-        const html = parseModuleJson(content)
-
         setOpenedModule({
             id: module,
-            json: content,
-            html: html
+            json: content
         })
     }
 
     if (openedModule) {
         return (
-            <div className="container mx-auto" dangerouslySetInnerHTML={{__html: openedModule.html}}>
+            <div className="container mx-auto">
+                <div className="row">
+                    <div className="col-8">
+                        <OpenModuleComponent file={openedModule} />
+                    </div>
+                    <div className="col-2">
+                        <AchievementsListComponent />
+                    </div>
+                </div>
             </div>
         )
     } else {

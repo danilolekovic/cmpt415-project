@@ -9,6 +9,7 @@ import { v4 } from 'uuid'
 
 function LoginComponent(props) {
     const [signUp, setSignUp] = useState(false)
+    const [loaded, setLoaded] = useState(false)
 
     const signUpNameRef = useRef(null)
     const signUpEmailRef = useRef(null)
@@ -23,7 +24,7 @@ function LoginComponent(props) {
     /**
      * Validates the input contents for the sign up form
      * 
-     * @param { name, email, password, passwordRepeat} formData 
+     * @param { name, email, password, passwordRepeat } formData 
      * @returns boolean
      */
     const validateSignUp = ({ name, email, password, passwordRepeat }) => {
@@ -50,6 +51,11 @@ function LoginComponent(props) {
         return true
     }
 
+    /**
+     * Validates the input contents for the sign in form
+     * @param { email, password } inputs
+     * @returns True if valid, false if invalid
+     */
     const validateSignIn = ({ email, password }) => {
         if (!email || !password) {
             return false
@@ -106,6 +112,10 @@ function LoginComponent(props) {
         }
     }
 
+    /**
+     * Handles the sign in form submission
+     * @param {Event} e 
+     */
     const handleSignIn = (e) => {
         e.preventDefault()
 
@@ -131,6 +141,10 @@ function LoginComponent(props) {
         }
     }
 
+    /**
+     * Sends an email to the user with a link to reset their password
+     * @param {Event} e 
+     */
     const handleForgotPassword = (e) => {
         e.preventDefault()
 
@@ -151,6 +165,8 @@ function LoginComponent(props) {
                     <input type="email" id="inputEmail" className="form-control input-sm mb-2" placeholder="Email address" required="True" ref={signUpEmailRef} />
                     <input type="password" id="inputPassword" className="form-control input-sm mb-2" placeholder="Password" required="True" ref={signUpPasswordRef} />
                     <input type="password" id="inputPasswordRepeated" className="form-control input-sm mb-2" placeholder="Repeat password" required="True" ref={signUpPasswordConfirmRef} />
+                    <label for="expertiseRange" className="form-label">What is your expertise level in <b>conditional statements</b>?</label>
+                    <input type="range" className="form-range" id="expertiseRange"></input>
                     <button className="btn btn-lg btn-primary btn-block" type="submit" onClick={handleSignUp}>Sign up</button>
                 </form>
             </div>
