@@ -4,9 +4,11 @@
   padding: 15px;
   margin: 0 auto;
 }
+
 .form-signin .checkbox {
   font-weight: 400;
 }
+
 .form-signin .form-control {
   position: relative;
   box-sizing: border-box;
@@ -14,16 +16,95 @@
   padding: 10px;
   font-size: 16px;
 }
+
 .form-signin .form-control:focus {
   z-index: 2;
 }
+
 .form-signin input[type="email"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
+
 .form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+/* Achievement Styles */
+.achievement-list {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
+
+.achievement-list li {
+  margin-bottom: 1em;
+}
+
+.achievement-icon {
+  font-size: 48px;
+}
+
+.achievement-text {
+  color: rgb(120, 120, 120);
+  display: block;
+  font-size: smaller;
+}
+
+/* Profile Modules Styles */
+.profile-modules-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.profile-modules-list li {
+  margin-bottom: 1em;
+}
+
+.profile-modules-title {
+  font-size: larger;
+  font-weight: bold;
+}
+
+.profile-modules-description {
+  display: block;
+}
+
+.profile-modules-title-locked {
+  opacity: 0.5;
+}
+
+/* Main Modules Styles */
+.modules-locked {
+  opacity: 0.5;
+}
+
+.modules-buttons .btn {
+  margin-right: 1em;
+}
+
+.modules-completion-suggestion {
+  font-weight: bold;
+}
+
+/* Competition */
+.competition-card-disabled {
+  opacity: 0.5;
+}
+
+/* Discussion */
+.discussion-reply {
+  margin-left: 2em;
+  margin-top: 1em;
+}
+
+.discussion-tag {
+  border-radius: 5px;
+  background-color: azure;
+  text-decoration: none;
+  padding-left: 3px;
+  padding-right: 3px;
 }

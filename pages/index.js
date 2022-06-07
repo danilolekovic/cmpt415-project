@@ -1,17 +1,32 @@
-import { useState } from 'react'
-import { Context } from '../context/Context'
-import styles from '../styles/Home.module.css'
+import { useEffect, useState } from 'react'
+import Context from '../context/Context'
 import NavComponent from '../components/NavComponent'
 import LoginComponent from '../components/LoginComponent'
+import ModulesComponent from '../components/ModulesComponent'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 export default function Home() {
   const [user, setUser] = useState(null)
+  const [openedModule, setOpenedModule] = useState(null)
 
-  return (
-    <div className={styles.container}>
-      <NavComponent />
-      <LoginComponent />
-    </div>
-  )
+  useEffect(() => {
+    const authenticatedUser = localStorage.getItem('auth')
+    setUser(authenticatedUser ? JSON.parse(authenticatedUser) : null)
+  }, []);
+
+  if (user) {
+    return (
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule}}>
+        <NavComponent />
+        <ModulesComponent />
+      </Context.Provider>
+    )
+  } else {
+    return (
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule}}>
+        <NavComponent />
+        <LoginComponent />
+      </Context.Provider>
+    )
+  }
 }

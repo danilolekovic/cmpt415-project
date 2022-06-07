@@ -1,5 +1,5 @@
-import { useRef, useState, useContext, useEffect } from 'react'
-import { Context } from '../context/Context'
+import { useRef, useState, useContext } from 'react'
+import Context from '../context/Context'
 import { Student, getStudent, createStudent } from '../data/Students'
 import validator from 'validator'
 import { v4 as uuidv4 } from "uuid"
@@ -18,7 +18,7 @@ function LoginComponent(props) {
     const signInEmailRef = useRef(null)
     const signInPasswordRef = useRef(null)
 
-    const { setUser } = useContext(Context)
+    const { user, setUser } = useContext(Context)
 
     /**
      * Validates the input contents for the sign up form
@@ -74,6 +74,7 @@ function LoginComponent(props) {
                         if (result == false) {
                             alert('Student already exists. Please use your own email address.')
                         } else {
+                            localStorage.setItem('auth', JSON.stringify(student))
                             setUser(student)
                             alert("Account has been created! You are now signed in.")
                             setSignUp(false)
@@ -96,14 +97,17 @@ function LoginComponent(props) {
     const handleSignIn = (e) => {
         e.preventDefault()
 
-        const email = emailRef.current.value
-        const password = passwordRef.current.value
+        const email = signInEmailRef.current.value
+        const password = signInPasswordRef.current.value
 
         // Do firebase login
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 getStudent(email).then((student) => {
+                    localStorage.setItem('auth', JSON.stringify(student))
                     setUser(student)
+
+                    alert("Logged in!")
                 })
             })
             .catch((error) => {
