@@ -1,7 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
-import { Context } from '../context/Context'
-import Editor from 'react-simple-code-editor'
-import { highlight, languages } from '../syntax/prism'
+import { useEffect, useState } from 'react'
 
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
@@ -32,19 +29,14 @@ function OpenModuleComponent(props) {
 
             // If the element is a code element, add it to the html
             if (element['type'] === 'code') {
-                let code = element['value']
+                const value = element['value']
+                const name = element['name']
 
                 divs.push(
                     <div id="code-editor-box">
-                        <Editor
-                            value={code}
-                            highlight={c => highlight(c, languages.python)}
-                            padding={10}
-                            style={{
-                                fontFamily: '"Fira code", "Fira Mono", monospace',
-                                fontSize: 14,
-                            }}
-                            />
+                        <textarea>
+                            {value}
+                        </textarea>
                     </div>
                 )
             }

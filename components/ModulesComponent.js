@@ -3,7 +3,8 @@ import Context from '../context/Context'
 import RecentActivityComponent from './RecentActivityComponent'
 import conditionalStatementsJson from '../modules/conditional_statements.json'
 import OpenModuleComponent from './OpenModuleComponent'
-import AchievementsListComponent from './AchivementsListComponent'
+import AchievementsListComponent from './AchievementsListComponent'
+import EditorComponent from './EditorComponent'
 
 function ModulesComponent() {
     const [moduleContents, setModuleContents] = useState(null)
@@ -29,11 +30,11 @@ function ModulesComponent() {
         return (
             <div className="container mx-auto">
                 <div className="row">
-                    <div className="col-8">
+                    <div className="col">
                         <OpenModuleComponent file={openedModule} />
                     </div>
-                    <div className="col-2">
-                        <AchievementsListComponent />
+                    <div className="col">
+                        <EditorComponent />
                     </div>
                 </div>
             </div>
