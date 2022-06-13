@@ -14,7 +14,6 @@
         },
         {
             "type": "code",
-            "name": "conditional-statements-example-1",
             "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\telse:\n\t\tprint(\"x and y must be equal\")"
         },
         {
@@ -30,6 +29,29 @@
                     "matches": 1
                 }
             ]
+        },
+        {
+            "type": "mc",
+            "question": [
+                {
+                    "type": "html",
+                    "value": "Will the following code cause an error?"
+                },
+                {
+                    "type": "code",
+                    "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\telse:\n\t\tprint(\"x and y must be equal\")"
+                },
+                {
+                    "type": "html",
+                    "value": "Check your answer by putting the code into the editor on the right."
+                }
+            ],
+            "answers": [
+                "No",
+                "Yes"
+            ],
+            "correctAnswerIndex": 0,
+            "explanation": "This is a legal nested if-else statement. The inner if-else statement is contained completely within the body of the outer else-block."
         }
     ]
 }

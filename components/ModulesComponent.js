@@ -30,10 +30,10 @@ function ModulesComponent() {
         return (
             <div className="container mx-auto">
                 <div className="row">
-                    <div className="col">
+                    <div className="col-7">
                         <OpenModuleComponent file={openedModule} />
                     </div>
-                    <div className="col">
+                    <div className="col-5">
                         <EditorComponent />
                     </div>
                 </div>
