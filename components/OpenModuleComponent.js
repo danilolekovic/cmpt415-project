@@ -19,8 +19,16 @@ function OpenModuleComponent(props) {
         setElements(divs)
     }
 
-    const handleMcAnswer = (e, questionNumber, correctAnswerIndex) => {
-        // ToDo: Handle answer
+    const handleMcAnswer = (e, index, correctAnswerIndex, explanation) => {
+        if (e.target.checked) {
+            if (index === correctAnswerIndex) {
+                e.target.style = 'background-color: green'
+                e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- correct! ' + explanation
+            } else {
+                e.target.style = 'background-color: red'
+                e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- incorrect! ' + explanation
+            }
+        }
     }
 
     const transformJsonToHtml = (moduleBody, index) => {
@@ -38,7 +46,7 @@ function OpenModuleComponent(props) {
         // If the element is a html element, add it to the html
         if (element['type'] === 'html') {
             divs.push((
-                <span>{element['value']}</span>
+                <span>{element['value']}<br /></span>
             ))
         }
 
@@ -48,7 +56,6 @@ function OpenModuleComponent(props) {
 
             divs.push(
                 <div id="code-editor-box">
-                    <br />
                     <SyntaxHighlighter language="python">
                         {value}
                     </SyntaxHighlighter>
@@ -60,6 +67,7 @@ function OpenModuleComponent(props) {
             const mcBody = element['question']
             const mcAnswers = element['answers']
             const correctAnswer = element['correctAnswerIndex']
+            const explanation = element['explanation']
             const mcDivs = []
             const mcAnswerDivs = []
 
@@ -73,7 +81,7 @@ function OpenModuleComponent(props) {
                 const checkBoxCombo = []
 
                 checkBoxCombo.push(
-                    <input type="radio" className="form-check-input" name={`mcq-${mcQuestionNumber}-${i}`} value={i} />
+                    <input type="radio" className="form-check-input" name={`mcq-${mcQuestionNumber}-${i}`} value={i} onChange={e => handleMcAnswer(e, i, correctAnswer, explanation)} />
                 )
 
                 checkBoxCombo.push(
@@ -81,17 +89,16 @@ function OpenModuleComponent(props) {
                 )
 
                 mcAnswerDivs.push(
-                    <div className="form-check" onChange={e => handleMcAnswer(e, mcQuestionNumber, correctAnswer)}>
+                    <div className="form-check">
                         {checkBoxCombo}
                     </div>
                 )
             }
-
+            
             divs.push(
-                <div id={"mc-question-box " + `mcq-${mcQuestionNumber}`}>
+                <div id="mc-question-box">
                     <h3>Multiple-Choice Question</h3>
                     {mcDivs}
-                    <br />
                     <div>
                         {mcAnswerDivs}
                     </div>
@@ -102,7 +109,9 @@ function OpenModuleComponent(props) {
         // If the element is a image element, add it to the html
         if (element['type'] === 'image') {
             divs.push(
-                <img src={element['value']} />
+                <div className="module-image">
+                    <img src={element['value']} />
+                </div>
             )
         }
 

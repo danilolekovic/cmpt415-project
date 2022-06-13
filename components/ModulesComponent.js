@@ -33,8 +33,9 @@ function ModulesComponent() {
                     <div className="col-7">
                         <OpenModuleComponent file={openedModule} />
                     </div>
-                    <div className="col-5">
+                    <div className="col-5 position-fixed" style={{right: 0}}>
                         <EditorComponent />
+                        <a href="#" className="btn btn-primary btn-module-run-code">Run Code</a>
                     </div>
                 </div>
             </div>

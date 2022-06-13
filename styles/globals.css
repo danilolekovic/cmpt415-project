@@ -114,20 +114,29 @@
 #mc-question-box {
   padding: 1.5em;
   border-radius: 1em;
+  background-color: rgb(243, 249, 255);
 }
 
-#mc-question-box-0 {
-  background-color: rgb(236, 236, 236);
-}
-
-#mc-question-box-1 {
+#question-correct {
   background-color: rgb(241, 255, 244);
 }
 
-#mc-question-box-2 {
+#question-incorrect {
   background-color: rgb(255, 241, 241);
 }
 
 #mc-question-box h3 {
   font-size: 16px;
+}
+
+.module-image {
+  text-align: center;
+}
+
+.btn-module-run-code {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 2em;
+  z-index: 9999;
 }

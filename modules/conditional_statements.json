@@ -14,7 +14,7 @@
         },
         {
             "type": "code",
-            "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\telse:\n\t\tprint(\"x and y must be equal\")"
+            "value": "x = 10\ny = 10\n\nif x < y:\n    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
         },
         {
             "type": "html",
@@ -22,7 +22,7 @@
         },
         {
             "type": "exercise",
-            "code": "x = 10\ny = 10\nif x < y:\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\t\telse:\n\t\tprint(\"x and y must be equal\")",
+            "code": "x = 10\ny = 10\nif x < y:    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n        else:\n        print(\"x and y must be equal\")",
             "regex": [
                 {
                     "pattern": "",
@@ -39,7 +39,7 @@
                 },
                 {
                     "type": "code",
-                    "value": "x = 10\ny = 10\nif x < y:\n\tprint(\"x is less than y\")\nelse:\n\tif x > y:\n\t\tprint(\"x is greater than y\")\n\telse:\n\t\tprint(\"x and y must be equal\")"
+                    "value": "x = 10\ny = 10\nif x < y:\n    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
                 },
                 {
                     "type": "html",
@@ -52,6 +52,63 @@
             ],
             "correctAnswerIndex": 0,
             "explanation": "This is a legal nested if-else statement. The inner if-else statement is contained completely within the body of the outer else-block."
+        },
+        {
+            "type": "header",
+            "level": "2",
+            "value": "Chained Conditionals"
+        },
+        {
+            "type": "html",
+            "value": "Python provides an alternative way to write nested selection such as the one shown in the previous section. This is sometimes referred to as a chained conditional."
+        },
+        {
+            "type": "code",
+            "value": "if x < y:\n    print(\"x is less than y\")\nelif x > y:\n    print(\"x is greater than y\")\nelse:\n    print(\"x and y must be equal\")"
+        },
+        {
+            "type": "html",
+            "value": "The flow of control can be drawn in a different orientation but the resulting pattern is identical to the one shown above."
+        },
+        {
+            "type": "image",
+            "value": "https://runestone.academy/ns/books/published/thinkcspy/_images/flowchart_chained_conditional.png"
+        },
+        {
+            "type": "html",
+            "value": "elif is an abbreviation of else if. Again, exactly one branch will be executed. There is no limit of the number of elif statements but only a single (and optional) final else statement is allowed and it must be the last branch in the statement."
+        },
+        {
+            "type": "html",
+            "value": "Each condition is checked in order. If the first is false, the next is checked, and so on. If one of them is true, the corresponding branch executes, and the statement ends. Even if more than one condition is true, only the first true branch executes."
+        },
+        {
+            "type": "html",
+            "value": "Here is the same program using elif."
+        },
+        {
+            "type": "code",
+            "value": "x = 10\ny = 10\n\nif x < y:\n    print(\"x is less than y\")\nelif x > y:\n    print(\"x is greater than y\")\nelse:\n    print(\"x and y must be equal\")"
+        },
+        {
+            "type": "mc",
+            "question": [
+                {
+                    "type": "html",
+                    "value": "What will the following code print if x = 3, y = 5, and z = 2?"
+                },
+                {
+                    "type": "code",
+                    "value": "if x < y and x < z:\n    print(\"a\")\nelif y < x and y < z:\n    print(\"b\")\nelse:\n    print(\"c\")"
+                }
+            ],
+            "answers": [
+                "a",
+                "b",
+                "c"
+            ],
+            "correctAnswerIndex": 2,
+            "explanation": "Since the first two Boolean expressions are false the else will be executed."
         }
     ]
 }
