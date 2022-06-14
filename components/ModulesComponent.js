@@ -3,11 +3,9 @@ import Context from '../context/Context'
 import RecentActivityComponent from './RecentActivityComponent'
 import conditionalStatementsJson from '../modules/conditional_statements.json'
 import OpenModuleComponent from './OpenModuleComponent'
-import AchievementsListComponent from './AchievementsListComponent'
 import EditorComponent from './EditorComponent'
 
 function ModulesComponent() {
-    const [moduleContents, setModuleContents] = useState(null)
     const { openedModule, setOpenedModule } = useContext(Context)
 
     const handleModuleStart = (e) => {
@@ -35,7 +33,6 @@ function ModulesComponent() {
                     </div>
                     <div className="col-5 position-fixed" style={{right: 0}}>
                         <EditorComponent />
-                        <a href="#" className="btn btn-primary btn-module-run-code">Run Code</a>
                     </div>
                 </div>
             </div>

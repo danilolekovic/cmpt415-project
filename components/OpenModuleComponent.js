@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, memo } from 'react'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
 function OpenModuleComponent(props) {
@@ -131,4 +131,4 @@ function OpenModuleComponent(props) {
     )
 }
 
-export default OpenModuleComponent
+export default memo(OpenModuleComponent)
