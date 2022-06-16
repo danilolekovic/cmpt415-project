@@ -1,8 +1,9 @@
 import { useContext } from 'react'
 import Context from '../context/Context'
+import { Pages } from '../context/Pages'
 
 function NavComponent(props) {
-    const { user, setUser, setOpenedModule } = useContext(Context)
+    const { user, setUser, setOpenedModule, page, setPage } = useContext(Context)
 
     const handleSignOut = (e) => {
         e.preventDefault()
@@ -13,6 +14,21 @@ function NavComponent(props) {
     const handleModulesClick = (e) => {
         e.preventDefault()
         setOpenedModule(null)
+        setPage(Pages.MODULES)
+    }
+
+    const handleProfileClick = (e) => {
+        e.preventDefault()
+        setOpenedModule(null)
+        setPage(Pages.PROFILE)
+    }
+
+    const checkIfActive = (pageName) => {
+        if (page === pageName) {
+            return ' active'
+        }
+
+        return ''
     }
 
     let navBarContents = (
@@ -25,7 +41,7 @@ function NavComponent(props) {
             <div className="collapse navbar-collapse" id="navbarText">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className="nav-item">
-                        <a className="nav-link active" href="#" onClick={handleModulesClick}>Modules</a>
+                        <a className={"nav-link" + checkIfActive(Pages.MODULES)} href="#" onClick={handleModulesClick}>Modules</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="#">Discussion</a>
@@ -34,7 +50,7 @@ function NavComponent(props) {
                         <a className="nav-link" href="#">Competition</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" aria-current="page" href="#">My Profile</a>
+                        <a className={"nav-link" + checkIfActive(Pages.PROFILE)} aria-current="page" href="#" onClick={handleProfileClick}>My Profile</a>
                     </li>
                 </ul>
                 <span className="navbar-text">

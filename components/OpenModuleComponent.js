@@ -31,6 +31,10 @@ function OpenModuleComponent(props) {
         }
     }
 
+    const checkMcCompleted = () => {
+        // ToDo: check if all mc questions are completed
+    }
+
     const transformJsonToHtml = (moduleBody, index) => {
         let divs = []
 

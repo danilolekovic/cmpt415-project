@@ -1,0 +1,10 @@
+{
+    "achievements": [
+        {
+            "id": 1,
+            "description": "Completed all MC exercises in a module.",
+            "emoji": "🧑‍🎓",
+            "score": 100
+        }
+    ]
+}

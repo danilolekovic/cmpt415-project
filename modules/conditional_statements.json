@@ -2,6 +2,7 @@
     "index": 0,
     "name": "Conditional Statements",
     "description": "Covers conditional statements in Python; if statements",
+    "achievements": [0],
     "body": [
         {
             "type": "header",

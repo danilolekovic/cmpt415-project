@@ -75,3 +75,54 @@ export async function createStudent(student) {
         return false
     }
 }
+
+/**
+ * Checks if a student has an achievement
+ * @param {Student} student 
+ * @param {Achievement ID} achievement 
+ * @returns true if the student has the achievement, false otherwise
+ */
+export async function checkStudentHasAchievement(student, achievement) {
+    const q = query(collection(db, "students"), where("email", "==", student.email))
+
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+        return false
+    }
+
+    const studentDoc = querySnapshot.docs[0]
+
+    const studentData = studentDoc.data()
+
+    return studentData.achievements.includes(achievement)
+}
+
+/**
+ * Awards an achievement to a student
+ * @param {Student} student 
+ * @param {Achievement ID} achievement 
+ * @returns false if the student has the achievement or does not exist, true otherwise
+ */
+export async function giveStudentAchievement(student, achievement) {
+    const q = query(collection(db, "students"), where("email", "==", student.email))
+
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+        return false
+    }
+
+    const studentDoc = querySnapshot.docs[0]
+
+    const studentData = studentDoc.data()
+
+    if (!studentData.achievements.includes(achievement)) {
+        studentData.achievements.push(achievement)
+        studentDoc.ref.update(studentData)
+
+        return true
+    }
+    
+    return false
+}
