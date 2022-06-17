@@ -7,7 +7,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore'
  * @typedef {Object} Student
  */
 export class Student {
-    constructor(uuid, name, email, anonymousName, isAnonymous, achievements, level, friends) {
+    constructor(uuid, name, email, anonymousName, isAnonymous, achievements, level, friends, score) {
         this.uuid = uuid
         this.name = name
         this.email = email
@@ -16,6 +16,7 @@ export class Student {
         this.achievements = achievements
         this.level = level
         this.friends = friends
+        this.score = score
     }
 }
 
@@ -33,12 +34,13 @@ const studentConverter = {
             is_anonymous: student.isAnonymous,
             achievements: student.achievements,
             level: student.level,
-            friends: student.friends
+            friends: student.friends,
+            score: student.score
         }
     },
     fromFirestore: function (snapshot, options) {
         const data = snapshot.data(options)
-        return new Student(data.uuid, data.name, data.email, data.anonymous_name, data.is_anonymous, data.achievements, data.level, data.friends)
+        return new Student(data.uuid, data.name, data.email, data.anonymous_name, data.is_anonymous, data.achievements, data.level, data.friends, data.score)
     }
 }
 

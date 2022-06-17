@@ -89,7 +89,7 @@ function LoginComponent(props) {
             createUserWithEmailAndPassword(auth, email, password)
                 .then(() => {
                     // ToDo: create anonymous name generation
-                    const student = new Student(uuidv4(), name, email, null, false, [], 1, [])
+                    const student = new Student(uuidv4(), name, email, null, false, [], 1, [], 0)
 
                     // ToDo: if student already exists, do not create new student
                     createStudent(student).then((result) => {

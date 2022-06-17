@@ -1,10 +1,13 @@
-import { useEffect, useState, memo } from 'react'
+import { useEffect, useState, useContext, memo } from 'react'
+import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
+    const { user, setUser } = useContext(Context)
     const [elements, setElements] = useState([])
     const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
+    const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
 
     const handleModuleStart = (e) => {
         // Parse the module's body
@@ -21,6 +24,12 @@ function OpenModuleComponent(props) {
 
     const handleMcAnswer = (e, index, correctAnswerIndex, explanation) => {
         if (e.target.checked) {
+            const name = e.target.name
+
+            if (answeredMcQuestions.includes(name)) {
+                return
+            }
+
             if (index === correctAnswerIndex) {
                 e.target.style = 'background-color: green'
                 e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- correct! ' + explanation
@@ -28,12 +37,16 @@ function OpenModuleComponent(props) {
                 e.target.style = 'background-color: red'
                 e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- incorrect! ' + explanation
             }
+
+            setAnsweredMcQuestions([...answeredMcQuestions, name])
+
+            if (checkMcCompleted()) {
+                // ToDo: give achievement once all MC are completed
+            }
         }
     }
 
-    const checkMcCompleted = () => {
-        // ToDo: check if all mc questions are completed
-    }
+    const checkMcCompleted = () => answeredMcQuestions.length === mcQuestionNumber
 
     const transformJsonToHtml = (moduleBody, index) => {
         let divs = []

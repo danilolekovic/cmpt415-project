@@ -4,6 +4,7 @@ import RecentActivityComponent from './RecentActivityComponent'
 import conditionalStatementsJson from '../modules/conditional_statements.json'
 import OpenModuleComponent from './OpenModuleComponent'
 import EditorComponent from './EditorComponent'
+import LeaderboardComponent from './LeaderboardComponent'
 
 function ModulesComponent() {
     const { openedModule, setOpenedModule } = useContext(Context)
@@ -70,6 +71,7 @@ function ModulesComponent() {
                     </div>
                     <div className="col-3">
                         <RecentActivityComponent />
+                        <LeaderboardComponent />
                     </div>
                 </div>
             </div>
