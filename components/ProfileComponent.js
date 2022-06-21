@@ -8,24 +8,17 @@ export default function ProfileComponent(props) {
     const [achievements, setAchievements] = useState([])
 
     const loadAchievements = () => {
-        setAchievements([])
-        const achievementsList = achievementsJson.achievements
-        // loop through all elements in achievements.json
-        for (let i = 0; i < achievementsList.length; i++) {
-            const achievement = achievementsList[i]
+        const studentAchievements = user.achievements
+        const achievements = achievementsJson.achievements.filter(a => studentAchievements.includes(a.id))
 
-            if (user.achievements.includes(achievement.id)) {
-                setAchievements([
-                    ...achievements,
-                    <AchievementComponent id={achievement.id} description={achievement.description} emoji={achievement.emoji} />
-                ])
-            }
-        }
+        setAchievements(achievements.map(achievement => {
+            return (<AchievementComponent id={achievement.id} description={achievement.description} emoji={achievement.emoji} />)
+        }))
     }
-    // loadAchievements only once
+
     useEffect(() => {
         loadAchievements()
-    }, [user])
+    }, [])
 
     return (
         <div className="container mx-auto">
@@ -35,7 +28,7 @@ export default function ProfileComponent(props) {
                 <div className="row">
                   <div className="col-sm">
                     <h4>{user.name}</h4>
-                    <p>{user.email} &middot; Also known as "{user.anonymousName}"</p>
+                    <p>{user.anonymousName === null ? user.email : `${user.email} - Also known as "${user.anonymousName}"`}</p>
                     <a href="#">Edit Profile</a>
                     <br /><br />
                     <h5>Student</h5>
