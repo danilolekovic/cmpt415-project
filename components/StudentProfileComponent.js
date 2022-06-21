@@ -23,7 +23,7 @@ export default function StudentProfileComponent(props) {
 
     return (
         <div className="container mx-auto">
-            <h3>My Profile</h3>
+            <h3>Student Profile</h3>
             <hr />
             <div className="container">
                 <div className="row">
