@@ -8,20 +8,14 @@ export default function StudentProfileComponent(props) {
     const [achievements, setAchievements] = useState([])
 
     const loadAchievements = () => {
-        setAchievements([])
-        const achievementsList = achievementsJson.achievements
-        // loop through all elements in achievements.json
-        for (let i = 0; i < achievementsList.length; i++) {
-            const achievement = achievementsList[i]
+        const studentAchievements = profileView.achievements
+        const achievements = achievementsJson.achievements.filter(a => studentAchievements.includes(a.id))
 
-            if (profileView.achievements.includes(achievement.id)) {
-                setAchievements([
-                    ...achievements,
-                    <AchievementComponent id={achievement.id} description={achievement.description} emoji={achievement.emoji} />
-                ])
-            }
-        }
+        setAchievements(achievements.map(achievement => {
+            return (<AchievementComponent id={achievement.id} description={achievement.description} emoji={achievement.emoji} />)
+        }))
     }
+
     // loadAchievements only once
     useEffect(() => {
         loadAchievements()
@@ -34,7 +28,7 @@ export default function StudentProfileComponent(props) {
             <div className="container">
                 <div className="row">
                   <div className="col-sm">
-                    <h4>{profileView.name}</h4>
+                    <h4>{profileView.isAnonymous ? profileView.anonymousName : profileView.name}</h4>
                     <a href="#">Send Friend Request</a>
                     <br /><br />
                     <h5>Student</h5>

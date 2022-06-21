@@ -7,7 +7,7 @@ export async function getLeaderboard() {
     return querySnapshot.docs.map(doc => doc.data()).map(data => {
         return {
             uuid: data.uuid,
-            name: data.isAnonymous ? data.anonymousName : data.name,
+            name: data.is_anonymous ? data.anonymous_name : data.name,
             achievements: data.achievements,
             level: data.level,
             score: data.score,

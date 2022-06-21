@@ -170,6 +170,7 @@
 
 .achievement-emoji {
   font-size: 48px;
+  display: block;
 }
 
 .achievement-text {

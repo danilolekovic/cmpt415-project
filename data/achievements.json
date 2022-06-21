@@ -5,6 +5,12 @@
             "description": "Completed all MC exercises in a module.",
             "emoji": "🧑‍🎓",
             "score": 100
+        },
+        {
+            "id": 2,
+            "description": "Used an anonymous name.",
+            "emoji": "🕵️",
+            "score": 0
         }
     ]
 }
