@@ -1,8 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import Context from '../context/Context'
 import { getLeaderboard } from "../data/Gamification"
+import { Student, getStudentById } from "../data/Students"
+import { Pages } from '../context/Pages'
 
 export default function LeaderboardComponent() {
+    const { user, setPage, setProfileView } = useContext(Context)
     const [leaderboard, setLeaderboard] = useState([])
+
+    const openProfile = (uuid) => {
+        if (user.uuid === uuid) {
+            setPage(Pages.PROFILE)
+            return
+        }
+
+        getStudentById(uuid).then(student => {
+            setProfileView(student)
+            setPage(Pages.STUDENT_PROFILE)
+        })
+    }
 
     useEffect(() => {
         getLeaderboard().then(l => setLeaderboard(l))
@@ -29,7 +45,7 @@ export default function LeaderboardComponent() {
                         }).map((data, index) => (
                             <tr>
                                 <th scope="row">{index + 1}</th>
-                                <td>{data.name}</td>
+                                <td><a href="#" onClick={e => openProfile(data.uuid)}>{data.name}</a></td>
                                 <td>{data.score}</td>
                                 <td>{data.level}</td>
                                 <td>{data.achievements.length}</td>

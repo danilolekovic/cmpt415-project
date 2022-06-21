@@ -6,10 +6,12 @@ import ModulesComponent from '../components/ModulesComponent'
 import { Pages } from '../context/Pages'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import ProfileComponent from '../components/ProfileComponent'
+import StudentProfileComponent from '../components/StudentProfileComponent'
 
 export default function Home() {
   const [user, setUser] = useState(null)
   const [page, setPage] = useState(null)
+  const [profileView, setProfileView] = useState(null)
   const [openedModule, setOpenedModule] = useState(null)
 
   useEffect(() => {
@@ -22,17 +24,19 @@ export default function Home() {
 
     if (page === Pages.PROFILE) {
       currentPage = (<ProfileComponent></ProfileComponent>)
+    } else if (page === Pages.STUDENT_PROFILE) {
+      currentPage = (<StudentProfileComponent></StudentProfileComponent>)
     }
 
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage}}>
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView}}>
         <NavComponent />
         {currentPage}
       </Context.Provider>
     )
   } else {
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage}}>
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView}}>
         <NavComponent />
         <LoginComponent />
       </Context.Provider>

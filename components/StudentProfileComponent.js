@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
 import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
 
-export default function ProfileComponent(props) {
-    const { user } = useContext(Context)
+export default function StudentProfileComponent(props) {
+    const { profileView } = useContext(Context)
     const [achievements, setAchievements] = useState([])
 
     const loadAchievements = () => {
@@ -14,7 +14,7 @@ export default function ProfileComponent(props) {
         for (let i = 0; i < achievementsList.length; i++) {
             const achievement = achievementsList[i]
 
-            if (user.achievements.includes(achievement.id)) {
+            if (profileView.achievements.includes(achievement.id)) {
                 setAchievements([
                     ...achievements,
                     <AchievementComponent id={achievement.id} description={achievement.description} emoji={achievement.emoji} />
@@ -25,7 +25,7 @@ export default function ProfileComponent(props) {
     // loadAchievements only once
     useEffect(() => {
         loadAchievements()
-    }, [user])
+    }, [])
 
     return (
         <div className="container mx-auto">
@@ -34,14 +34,13 @@ export default function ProfileComponent(props) {
             <div className="container">
                 <div className="row">
                   <div className="col-sm">
-                    <h4>{user.name}</h4>
-                    <p>{user.email} &middot; Also known as "{user.anonymousName}"</p>
-                    <a href="#">Edit Profile</a>
+                    <h4>{profileView.name}</h4>
+                    <a href="#">Send Friend Request</a>
                     <br /><br />
                     <h5>Student</h5>
                     <ul>
-                        <li>Score: {user.score}</li>
-                        <li>Level: {user.level}</li>
+                        <li>Score: {profileView.score}</li>
+                        <li>Level: {profileView.level}</li>
                         <li>Streak: ...</li>
                     </ul>
                     <br />
