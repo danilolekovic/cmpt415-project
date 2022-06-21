@@ -45,12 +45,29 @@ const studentConverter = {
 }
 
 /**
- * Returns a studen by email
+ * Returns a student by email
  * @param {string} email 
  * @returns Student
  */
 export async function getStudent(email) {
     const q = query(collection(db, "students"), where("email", "==", email))
+
+    const querySnapshot = await getDocs(q)
+    
+    if (querySnapshot.empty) {
+        return null
+    }
+
+    return studentConverter.fromFirestore(querySnapshot.docs[0], { idField: "uuid" })
+}
+
+/**
+ * Returns a student by uuid
+ * @param {string} uuid 
+ * @returns Student
+ */
+ export async function getStudentById(uuid) {
+    const q = query(collection(db, "students"), where("uuid", "==", uuid))
 
     const querySnapshot = await getDocs(q)
     
