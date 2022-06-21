@@ -6,6 +6,7 @@ import { Pages } from '../context/Pages'
 
 export default function LeaderboardComponent() {
     const { user, setPage, setProfileView } = useContext(Context)
+    const [loading, setLoading] = useState(true)
     const [leaderboard, setLeaderboard] = useState([])
 
     const openProfile = (uuid) => {
@@ -21,7 +22,10 @@ export default function LeaderboardComponent() {
     }
 
     useEffect(() => {
-        getLeaderboard().then(l => setLeaderboard(l))
+        getLeaderboard().then(l => {
+            setLoading(false)
+            setLeaderboard(l)
+        })
     }, [])
 
     return (
@@ -40,7 +44,7 @@ export default function LeaderboardComponent() {
                 </thead>
                 <tbody>
                     {
-                        leaderboard.sort(function (left, right) {
+                        loading ? <tr><td colSpan="5">Loading...</td></tr> : leaderboard.sort(function (left, right) {
                             return right.score - left.score
                         }).map((data, index) => (
                             <tr>
