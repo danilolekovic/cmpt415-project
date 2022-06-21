@@ -1,5 +1,5 @@
 import { db } from '../firebase'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore'
 
 /**
  * Represents a student in the system
@@ -72,10 +72,11 @@ export async function createStudent(student) {
     const querySnapshot = await getDocs(q)
 
     if (querySnapshot.empty) {
-        return collection(db, "students").add(studentConverter.toFirestore(student))
-    } else {
-        return false
+        await setDoc(doc(db, "students", student.uuid), studentConverter.toFirestore(student))
+        return student
     }
+
+    return false
 }
 
 /**
