@@ -24,7 +24,9 @@ export default function LeaderboardComponent() {
                 </thead>
                 <tbody>
                     {
-                        leaderboard.map((data, index) => (
+                        leaderboard.sort(function (left, right) {
+                            return right.score - left.score
+                        }).map((data, index) => (
                             <tr>
                                 <th scope="row">{index + 1}</th>
                                 <td>{data.name}</td>
