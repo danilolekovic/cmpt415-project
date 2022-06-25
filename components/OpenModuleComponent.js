@@ -9,10 +9,52 @@ function OpenModuleComponent(props) {
     const [elements, setElements] = useState([])
     const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
     const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
+    const [currentPage, setCurrentPage] = useState(0)
+    const [pagination, setPagination] = useState([])
 
-    const handleModuleStart = (e) => {
+    const getCurrentPageBody = () => {
+        const currentPageBody = moduleJson.body.find(body => body.page === currentPage)
+
+        if (currentPageBody) {
+            return currentPageBody.content
+        }
+
+        return []
+    }
+
+    const getPageTitle = (page) => {
+        const pageTitle = moduleJson.body.find(body => body.page === page)
+
+        if (pageTitle) {
+            return pageTitle.name
+        }
+
+        return '...'
+    }
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page)
+    }
+
+    const handlePagination = () => {
+        const pageList = []
+
+        for (let i = 0; i < moduleJson.body.length; i++) {
+            pageList.push(
+                <li className="page-item" key={i}>
+                    <a className="page-link" href="#" onClick={e => handlePageChange(i)}>
+                        {getPageTitle(i)}
+                    </a>
+                </li>
+            )
+        }
+
+        setPagination(pageList)
+    }
+
+    const handleModuleStart = () => {
         // Parse the module's body
-        const moduleBody = moduleJson['body']
+        const moduleBody = getCurrentPageBody()
         let divs = []
 
         // loop through each element in the module body
@@ -69,7 +111,7 @@ function OpenModuleComponent(props) {
         // If the element is a header element, add it to the html
         if (element['type'] === 'header') {
             divs.push(
-                <h2>{element['value']}</h2>
+                <h3>{element['value']}</h3>
             )
         }
 
@@ -154,10 +196,22 @@ function OpenModuleComponent(props) {
 
     useEffect(() => {
         handleModuleStart()
+    }, [currentPage])
+
+    useEffect(() => {
+        handlePagination()
     }, [])
 
     return (
-        elements
+        <div>
+            <h2>{getPageTitle(currentPage)}</h2>
+            <nav>
+                <ul className="pagination">
+                    {pagination}
+                </ul>
+            </nav>
+            {elements}
+        </div>
     )
 }
 
