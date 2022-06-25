@@ -178,3 +178,21 @@
   display: block;
   font-size: smaller;
 }
+
+/* Toast */
+
+.toast {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 4em 2em;
+  z-index: 1000;
+  display: block !important;
+}
+
+.toast-close {
+  right: 0;
+  float: right;
+  margin-right: 5px;
+  position: absolute;
+}

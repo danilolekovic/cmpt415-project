@@ -11,6 +11,7 @@ import StudentProfileComponent from '../components/StudentProfileComponent'
 export default function Home() {
   const [user, setUser] = useState(null)
   const [page, setPage] = useState(null)
+  const [toast, setToast] = useState(null)
   const [profileView, setProfileView] = useState(null)
   const [openedModule, setOpenedModule] = useState(null)
 
@@ -29,14 +30,14 @@ export default function Home() {
     }
 
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView}}>
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast}}>
         <NavComponent />
         {currentPage}
       </Context.Provider>
     )
   } else {
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView}}>
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast}}>
         <NavComponent />
         <LoginComponent />
       </Context.Provider>

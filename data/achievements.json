@@ -2,7 +2,7 @@
     "achievements": [
         {
             "id": 1,
-            "description": "Completed all MC exercises in a module.",
+            "description": "Answered a multiple choice question correctly.",
             "emoji": "🧑‍🎓",
             "score": 100
         },

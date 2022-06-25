@@ -5,9 +5,10 @@ import conditionalStatementsJson from '../modules/conditional_statements.json'
 import OpenModuleComponent from './OpenModuleComponent'
 import EditorComponent from './EditorComponent'
 import LeaderboardComponent from './LeaderboardComponent'
+import ToastComponent from './ToastComponent'
 
 function ModulesComponent() {
-    const { openedModule, setOpenedModule } = useContext(Context)
+    const { openedModule, setOpenedModule, toast } = useContext(Context)
 
     const handleModuleStart = (e) => {
         const module = e.currentTarget.getAttribute('module')
@@ -25,9 +26,20 @@ function ModulesComponent() {
         })
     }
 
+    const getToast = () => {
+        if (toast) {
+            return (
+                <ToastComponent title={toast.title} message={toast.message}></ToastComponent>
+            )
+        }
+
+        return (<></>)
+    }
+
     if (openedModule) {
         return (
             <div className="container mx-auto">
+                {getToast()}
                 <div className="row">
                     <div className="col-7">
                         <OpenModuleComponent file={openedModule} />
@@ -41,6 +53,7 @@ function ModulesComponent() {
     } else {
         return (
             <div className="container mx-auto">
+                {getToast()}
                 <div className="row">
                     <div className="col">
                         <h3>Modules</h3>

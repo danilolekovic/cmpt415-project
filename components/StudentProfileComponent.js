@@ -60,7 +60,7 @@ export default function StudentProfileComponent(props) {
                     <h4>Achievements</h4>
                     <ul className="achievement-list">
                         {
-                            achievements.map(achievement => {
+                            achievements.length === 0 ? <p>No achievements yet.</p> : achievements.map(achievement => {
                                 return (
                                     <li>
                                         {achievement}

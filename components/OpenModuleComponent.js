@@ -1,10 +1,11 @@
 import { useEffect, useState, useContext, memo } from 'react'
+import { checkStudentHasAchievement, giveStudentAchievement } from '../data/Students'
 import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
-    const { user, setUser } = useContext(Context)
+    const { user, setUser, setToast } = useContext(Context)
     const [elements, setElements] = useState([])
     const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
     const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
@@ -33,20 +34,32 @@ function OpenModuleComponent(props) {
             if (index === correctAnswerIndex) {
                 e.target.style = 'background-color: green'
                 e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- correct! ' + explanation
+
+                checkStudentHasAchievement(user, 1).then(res => {
+                    if (!res && !user.achievements.includes(1)) {
+                        giveStudentAchievement(user, 1).then(res => {
+                            // Temporary
+                            // ToDo: actually give the student the achievement
+                            setUser({
+                                ...user,
+                                achievements: [...user.achievements, 1]
+                            })
+
+                            setToast({
+                                title: 'Achievement unlocked',
+                                message: 'You answered a MC question correctly!'
+                            })
+                        })
+                    }
+                })
             } else {
                 e.target.style = 'background-color: red'
                 e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- incorrect! ' + explanation
             }
 
             setAnsweredMcQuestions([...answeredMcQuestions, name])
-
-            if (checkMcCompleted()) {
-                // ToDo: give achievement once all MC are completed
-            }
         }
     }
-
-    const checkMcCompleted = () => answeredMcQuestions.length === mcQuestionNumber
 
     const transformJsonToHtml = (moduleBody, index) => {
         let divs = []

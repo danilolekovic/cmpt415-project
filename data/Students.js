@@ -1,5 +1,5 @@
 import { db } from '../firebase'
-import { collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore'
+import { collection, query, where, getDocs, setDoc, doc, updateDoc } from 'firebase/firestore'
 
 /**
  * Represents a student in the system
@@ -136,10 +136,14 @@ export async function giveStudentAchievement(student, achievement) {
     const studentDoc = querySnapshot.docs[0]
 
     const studentData = studentDoc.data()
+    const achievements = studentData.achievements
 
-    if (!studentData.achievements.includes(achievement)) {
-        studentData.achievements.push(achievement)
-        studentDoc.ref.update(studentData)
+    if (!achievements.includes(achievement)) {
+        achievements.push(achievement)
+        
+        // update the student's achievements
+        // todo: fix this; it's currently not working!
+        // await updateDoc(studentDoc, { achievements: achievements })
 
         return true
     }
