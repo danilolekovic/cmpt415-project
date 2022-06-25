@@ -11,6 +11,7 @@ function OpenModuleComponent(props) {
     const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pagination, setPagination] = useState([])
+    const [lessonTime, setLessonTime] = useState('')
 
     const getCurrentPageBody = () => {
         const currentPageBody = moduleJson.body.find(body => body.page === currentPage)
@@ -40,13 +41,24 @@ function OpenModuleComponent(props) {
         const pageList = []
 
         for (let i = 0; i < moduleJson.body.length; i++) {
-            pageList.push(
-                <li className="page-item" key={i}>
-                    <a className="page-link" href="#" onClick={e => handlePageChange(i)}>
-                        {getPageTitle(i)}
-                    </a>
-                </li>
-            )
+            
+            if (i === currentPage) {
+                pageList.push(
+                    <li className="page-item active" key={i}>
+                        <a className="page-link" href="#" onClick={e => handlePageChange(i)}>
+                            ...
+                        </a>
+                    </li>
+                )
+            } else {
+                pageList.push(
+                    <li className="page-item" key={i}>
+                        <a className="page-link" href="#" onClick={e => handlePageChange(i)}>
+                            {getPageTitle(i)}
+                        </a>
+                    </li>
+                )
+            }
         }
 
         setPagination(pageList)
@@ -101,6 +113,23 @@ function OpenModuleComponent(props) {
 
             setAnsweredMcQuestions([...answeredMcQuestions, name])
         }
+    }
+
+    const calculateLessonTime = () => {
+        let text = ''
+
+        for (let i = 0; i < elements.length; i++) {
+            text += elements[i].innerText
+        }
+
+        text = text.replace(/<[^>]+>/g, '')
+
+        // Average adult is 225wpm; since this is coding, we will go
+        // with a lower wpm
+        const wpm = 185
+        const words = text.trim().split(/\s+/).length
+        const time = Math.ceil(words / wpm)
+        setLessonTime(time + " minute(s)")
     }
 
     const transformJsonToHtml = (moduleBody, index) => {
@@ -196,6 +225,7 @@ function OpenModuleComponent(props) {
 
     useEffect(() => {
         handleModuleStart()
+        calculateLessonTime()
     }, [currentPage])
 
     useEffect(() => {
@@ -205,12 +235,19 @@ function OpenModuleComponent(props) {
     return (
         <div>
             <h2>{getPageTitle(currentPage)}</h2>
+            <h6>Lesson {currentPage + 1}/{pagination.length} &middot; Estimated time to complete lesson: {lessonTime}</h6>
+            {elements}
             <nav>
-                <ul className="pagination">
+                <ul className="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
                     {pagination}
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
                 </ul>
             </nav>
-            {elements}
         </div>
     )
 }
