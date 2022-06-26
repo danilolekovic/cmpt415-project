@@ -262,7 +262,7 @@ function OpenModuleComponent(props) {
     return (
         <div>
             <h2>{getPageTitle(currentPage)}</h2>
-            <h6>Lesson {currentPage + 1}/{pagination.length} &middot; Estimated time to complete lesson: {lessonTime}</h6>
+            <h6>Lesson {currentPage + 1}/{moduleJson.body.length} &middot; Estimated time to complete lesson: {lessonTime}</h6>
             {elements}
             <nav>
                 <ul className="pagination justify-content-center">
