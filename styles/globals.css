@@ -196,3 +196,14 @@
   margin-right: 5px;
   position: absolute;
 }
+
+/* Code challenge box */
+.code-challenge-box {
+  padding: 1.5em;
+  border-radius: 1em;
+  background-color: rgb(243, 249, 255);
+}
+
+.code-challenge-box h3 {
+  font-size: 16px;
+}

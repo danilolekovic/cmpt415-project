@@ -17,6 +17,10 @@
                     "value": "x = 10\ny = 10\n\nif x < y:\n    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
                 },
                 {
+                    "type": "challenge",
+                    "value": "Using nested conditionals, write a program that prints out the following pattern:\n- If x is less than y, print \"x is less than y\"\n- If x is greater than y, print \"x is greater than y\"\n- If x and y are equal, print \"x and y must be equal\""
+                },
+                {
                     "type": "html",
                     "value": "The outer conditional contains two branches. The second branch (the else from the outer) contains another if statement, which has two branches of its own. Those two branches could contain conditional statements as well."  
                 },

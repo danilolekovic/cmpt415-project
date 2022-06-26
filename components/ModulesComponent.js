@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import Context from '../context/Context'
 import RecentActivityComponent from './RecentActivityComponent'
 import conditionalStatementsJson from '../modules/conditional_statements.json'
@@ -8,7 +8,7 @@ import LeaderboardComponent from './LeaderboardComponent'
 import ToastComponent from './ToastComponent'
 
 function ModulesComponent() {
-    const { openedModule, setOpenedModule, toast } = useContext(Context)
+    const { openedModule, setOpenedModule, toast, editorState } = useContext(Context)
 
     const handleModuleStart = (e) => {
         const module = e.currentTarget.getAttribute('module')
@@ -36,17 +36,33 @@ function ModulesComponent() {
         return (<></>)
     }
 
+    const getEditor = () => {
+        if (editorState === 0) {
+            return (<></>)
+        } else if (editorState === 1) {
+            return (
+                <div className="col-5 position-fixed" style={{right: 0}}>
+                    <EditorComponent />
+                </div>
+            )
+        } else if (editorState === 2) {
+            return (
+                <div className="col-5 position-fixed" style={{right: 0}}>
+                    <EditorComponent />
+                </div>
+            )
+        }
+    }
+
     if (openedModule) {
         return (
             <div className="container mx-auto">
                 {getToast()}
                 <div className="row">
-                    <div className="col-7">
+                    <div className={editorState === 0 ? "col-100" : "col-7"}>
                         <OpenModuleComponent file={openedModule} />
                     </div>
-                    <div className="col-5 position-fixed" style={{right: 0}}>
-                        <EditorComponent />
-                    </div>
+                    {getEditor()}
                 </div>
             </div>
         )

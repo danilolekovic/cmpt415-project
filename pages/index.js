@@ -15,6 +15,13 @@ export default function Home() {
   const [profileView, setProfileView] = useState(null)
   const [openedModule, setOpenedModule] = useState(null)
 
+  /**
+   * 0 => invisible
+   * 1 => fill-in-the-blanks
+   * 2 => normal editor
+   */
+  const [editorState, setEditorState] = useState(0)
+
   useEffect(() => {
     const authenticatedUser = localStorage.getItem('auth')
     setUser(authenticatedUser ? JSON.parse(authenticatedUser) : null)
@@ -30,14 +37,14 @@ export default function Home() {
     }
 
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast}}>
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast, editorState, setEditorState}}>
         <NavComponent />
         {currentPage}
       </Context.Provider>
     )
   } else {
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast}}>
+      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast, editorState, setEditorState}}>
         <NavComponent />
         <LoginComponent />
       </Context.Provider>

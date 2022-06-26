@@ -5,7 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
-    const { user, setUser, setToast } = useContext(Context)
+    const { user, setUser, setToast, editorState, setEditorState } = useContext(Context)
     const [elements, setElements] = useState([])
     const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
     const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
@@ -107,6 +107,10 @@ function OpenModuleComponent(props) {
         setElements(divs)
     }
 
+    const openCodingChallenge = () => {
+        setEditorState(1)
+    }
+
     const handleMcAnswer = (e, index, correctAnswerIndex, explanation) => {
         if (e.target.checked) {
             const name = e.target.name
@@ -190,6 +194,24 @@ function OpenModuleComponent(props) {
                     <SyntaxHighlighter language="python">
                         {value}
                     </SyntaxHighlighter>
+                </div>
+            )
+        }
+
+        // If the element is a challenge, add a 'start coding challenge' button
+        if (element['type'] === 'challenge') {
+            const value = element['value']
+
+            divs.push(
+                <div className="code-challenge-box">
+                    <h3>Coding Challenge</h3>
+                    <p>Would you like to start a coding challenge?</p>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success" onClick={openCodingChallenge}>Easy</button>
+                        <button type="button" class="btn btn-warning" onClick={openCodingChallenge}>Medium</button>
+                        <button type="button" class="btn btn-danger" onClick={openCodingChallenge}>Hard</button>
+                        <button type="button" class="btn btn-secondary">Skip</button>
+                    </div>
                 </div>
             )
         }
