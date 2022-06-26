@@ -34,31 +34,61 @@ function OpenModuleComponent(props) {
     }
 
     const handlePageChange = (page) => {
+        if (page < 0) {
+            page = 0
+        }
+
+        if (page >= moduleJson.body.length) {
+            page = moduleJson.body.length - 1
+        }
+
         setCurrentPage(page)
     }
 
     const handlePagination = () => {
         const pageList = []
 
+        if (currentPage !== 0) {
+            pageList.push(
+                <li class="page-item">
+                    <a class="page-link" href="#" tabindex="-1" onClick={() => handlePageChange(currentPage - 1)}>Previous</a>
+                </li>
+            )
+        }
+
         for (let i = 0; i < moduleJson.body.length; i++) {
             
             if (i === currentPage) {
                 pageList.push(
                     <li className="page-item active" key={i}>
-                        <a className="page-link" href="#" onClick={e => handlePageChange(i)}>
-                            ...
+                        <a className="page-link" href="#" onClick={() => handlePageChange(i)}>
+                            Current Page
                         </a>
                     </li>
                 )
-            } else {
+
+                continue
+            }
+
+            if (i === moduleJson.body.length - 1) {
                 pageList.push(
                     <li className="page-item" key={i}>
-                        <a className="page-link" href="#" onClick={e => handlePageChange(i)}>
+                        <a className="page-link" href="#" onClick={() => handlePageChange(i)}>
                             {getPageTitle(i)}
                         </a>
                     </li>
                 )
+
+                continue
             }
+        }
+
+        if (currentPage !== moduleJson.body.length - 1) {
+            pageList.push(
+                <li class="page-item">
+                    <a class="page-link" href="#" onClick={() => handlePageChange(currentPage + 1)}>Next</a>
+                </li>
+            )
         }
 
         setPagination(pageList)
@@ -226,11 +256,8 @@ function OpenModuleComponent(props) {
     useEffect(() => {
         handleModuleStart()
         calculateLessonTime()
-    }, [currentPage])
-
-    useEffect(() => {
         handlePagination()
-    }, [])
+    }, [currentPage])
 
     return (
         <div>
@@ -239,13 +266,7 @@ function OpenModuleComponent(props) {
             {elements}
             <nav>
                 <ul className="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
                     {pagination}
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
                 </ul>
             </nav>
         </div>
