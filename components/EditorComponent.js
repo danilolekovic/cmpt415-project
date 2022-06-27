@@ -1,5 +1,6 @@
 import Editor from "@monaco-editor/react"
-import { useRef, useState } from 'react'
+import { useRef, useState, useContext } from 'react'
+import Context from '../context/Context'
 import axios from 'axios'
 
 export default function EditorComponent(props) {
@@ -10,10 +11,15 @@ export default function EditorComponent(props) {
     
     const [output, setOutput] = useState([])
     const [runEnabled, setRunEnabled] = useState(true)
+    const { setEditorState } = useContext(Context)
     const editorRef = useRef()
 
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor
+    }
+
+    const closeCodingChallenge = () => {
+        setEditorState(0)
     }
 
     const runCode = (e) => {
@@ -89,8 +95,9 @@ export default function EditorComponent(props) {
                         })}
                     </ul>
                 </div>
-                <div className="run-button-container">
-                    <a href="#" className={"btn btn-primary btn-module-run-code" + (runEnabled ? "" : " disabled" )} onClick={e => runCode(e)}>Run Code</a>
+                <div class="btn-group btn-group-editor-run" role="group">
+                    <button type="button" className={"btn btn-primary" + (runEnabled ? "" : " disabled" )} onClick={e => runCode(e)}>Run Code</button>
+                    <button type="button" className="btn btn-light" href="#" role="button" onClick={closeCodingChallenge}>Close Coding Challenge</button>
                 </div>
             </div>
         </div>

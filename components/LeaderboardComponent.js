@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
 import { getLeaderboard } from "../data/Gamification"
-import { Student, getStudentById } from "../data/Students"
+import { getStudentById } from "../data/Students"
 import { Pages } from '../context/Pages'
 
 export default function LeaderboardComponent() {
@@ -49,7 +49,7 @@ export default function LeaderboardComponent() {
                         }).map((data, index) => (
                             <tr>
                                 <th scope="row">{index + 1}</th>
-                                <td><a href="#" onClick={e => openProfile(data.uuid)}>{data.name}</a></td>
+                                <td><a href="#" onClick={() => openProfile(data.uuid)}>{data.uuid === user.uuid ? "You" : data.name}</a></td>
                                 <td>{data.score}</td>
                                 <td>{data.level}</td>
                                 <td>{data.achievements.length}</td>

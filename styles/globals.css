@@ -133,12 +133,9 @@
   text-align: center;
 }
 
-.btn-module-run-code {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  margin: 1.5em;
-  z-index: 9998;
+.btn-group-editor-run {
+  margin-top: 2em;
+  float: right;
 }
 
 .editor-output {

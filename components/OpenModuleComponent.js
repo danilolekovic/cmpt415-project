@@ -5,7 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
-    const { user, setUser, setToast, editorState, setEditorState } = useContext(Context)
+    const { user, setUser, setToast, setEditorState } = useContext(Context)
     const [elements, setElements] = useState([])
     const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
     const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
@@ -107,8 +107,14 @@ function OpenModuleComponent(props) {
         setElements(divs)
     }
 
-    const openCodingChallenge = () => {
-        setEditorState(1)
+    const openCodingChallenge = (editorType) => {
+        if (editorType < 0)
+            editorType = 0
+
+        if (editorType > 2)
+            editorType = 2
+
+        setEditorState(editorType)
     }
 
     const handleMcAnswer = (e, index, correctAnswerIndex, explanation) => {
@@ -205,12 +211,10 @@ function OpenModuleComponent(props) {
             divs.push(
                 <div className="code-challenge-box">
                     <h3>Coding Challenge</h3>
-                    <p>Would you like to start a coding challenge?</p>
+                    <p>Would you like to start a coding challenge? Completing a coding challenge is optional, but can earn you achievements and/or points.</p>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-success" onClick={openCodingChallenge}>Easy</button>
-                        <button type="button" class="btn btn-warning" onClick={openCodingChallenge}>Medium</button>
-                        <button type="button" class="btn btn-danger" onClick={openCodingChallenge}>Hard</button>
-                        <button type="button" class="btn btn-secondary">Skip</button>
+                        <button type="button" class="btn btn-success" onClick={() => openCodingChallenge(2)}>Easier (Fill-in-the-Blanks)</button>
+                        <button type="button" class="btn btn-warning" onClick={() => openCodingChallenge(1)}>Harder (Code Everything)</button>
                     </div>
                 </div>
             )
