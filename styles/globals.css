@@ -138,8 +138,10 @@
   float: right;
 }
 
-.editor-output {
-  height: 100%;
+.b-r {
+  border-right: thin black solid;
+  height: 100vh;
+  overflow: auto;
 }
 
 .editor-output .output ul li {

@@ -4,6 +4,7 @@ import RecentActivityComponent from './RecentActivityComponent'
 import conditionalStatementsJson from '../modules/conditional_statements.json'
 import OpenModuleComponent from './OpenModuleComponent'
 import EditorComponent from './EditorComponent'
+import EasyEditorComponent from './EasyEditorComponent'
 import LeaderboardComponent from './LeaderboardComponent'
 import ToastComponent from './ToastComponent'
 
@@ -41,14 +42,14 @@ function ModulesComponent() {
             return (<></>)
         } else if (editorState === 1) {
             return (
-                <div className="col-5 position-fixed" style={{right: 0}}>
+                <div className="col-5 position-fixed b-r" style={{right: 0}}>
                     <EditorComponent />
                 </div>
             )
         } else if (editorState === 2) {
             return (
-                <div className="col-5 position-fixed" style={{right: 0}}>
-                    <EditorComponent />
+                <div className="col-5 position-fixed b-r" style={{right: 0}}>
+                    <EasyEditorComponent />
                 </div>
             )
         }
