@@ -9,8 +9,9 @@ export default function EasyEditorComponent(props) {
     const [code, setCode] = useState('')
     const [list, setList] = useState([])
     const [answers, setAnswers] = useState([])
+    const [completed, setCompleted] = useState(false)
     const [formikJson, setFormikJson] = useState({})
-    const { setEditorState } = useContext(Context)
+    const { setEditorState, setToast } = useContext(Context)
 
     const formik = useFormik({
         initialValues: formikJson,
@@ -22,14 +23,34 @@ export default function EasyEditorComponent(props) {
                 return
             }
 
+            const newCode = code + ""
+            let wrongAnswers = []
+
             for (let i = 0; i < valuesAsArray.length; i++) {
                 if (valuesAsArray[i] !== answers[i]) {
-                    alert("Wrong answer.")
-                    return
+                    wrongAnswers.push(i)
+                } else {
+                    newCode = newCode.replaceAll('""" Input ' + (i + 1) + ' here """', valuesAsArray[i])
                 }
             }
 
-            alert("Success!")
+            setCode(newCode)
+
+            if (wrongAnswers.length > 0) {
+                setToast({
+                    title: "Wrong Answer",
+                    message: "Incorrect answer(s): " + wrongAnswers.map(i => (i + 1)).join(', ')
+                })
+
+                return
+            }
+
+            setToast({
+                title: "Correct!",
+                message: "You have completed the exercise."
+            })
+
+            setCompleted(true)
         },
     })
 
@@ -104,6 +125,18 @@ export default function EasyEditorComponent(props) {
         convertCodeToSyntaxArea()
     }, [])
 
+    const checkAnswersBtn = () => {
+        if (completed) {
+            return (
+                <></>
+            )
+        }
+
+        return (
+            <button type="submit" className="btn btn-primary">Check Answers</button>
+        )
+    }
+
     return (
         <div>
             <h2>Coding Challenge</h2>
@@ -123,7 +156,7 @@ export default function EasyEditorComponent(props) {
                     })}
                 </ol>
                 <div class="btn-group" role="group">
-                    <button type="submit" className="btn btn-primary">Check Answers</button>
+                    {checkAnswersBtn()}
                     <button type="button" className="btn btn-light" href="#" role="button" onClick={closeCodingChallenge}>Close Coding Challenge</button>
                 </div>
             </form>
