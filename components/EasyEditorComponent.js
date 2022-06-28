@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
+import { useFormik } from 'formik'
 import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
@@ -7,8 +8,30 @@ export default function EasyEditorComponent(props) {
     const [prompt, setPrompt] = useState([])
     const [code, setCode] = useState('')
     const [list, setList] = useState([])
-    const [inputs, setInputs] = useState([])
+    const [answers, setAnswers] = useState([])
+    const [formikJson, setFormikJson] = useState({})
     const { setEditorState } = useContext(Context)
+
+    const formik = useFormik({
+        initialValues: formikJson,
+        onSubmit: values => {
+            const valuesAsArray = Object.keys(values).map(key => values[key])
+
+            if (valuesAsArray.length !== answers.length) {
+                alert("Error occurred.")
+                return
+            }
+
+            for (let i = 0; i < valuesAsArray.length; i++) {
+                if (valuesAsArray[i] !== answers[i]) {
+                    alert("Wrong answer.")
+                    return
+                }
+            }
+
+            alert("Success!")
+        },
+    })
 
     useEffect(() => {
         setCode(inputCode)
@@ -37,18 +60,6 @@ export default function EasyEditorComponent(props) {
         convertPromptIntoList(questionPrompt)
     }, [])
 
-    const onInputChange = (i, e) => {
-        const newInputs = [...inputs]
-        
-        if (newInputs.length < i + 1) {
-            for (let j = newInputs.length; j < i + 1; j++) {
-                newInputs.push('')
-            }
-        }
-
-        newInputs[i] = e.target.value
-    }
-
     const convertCodeToSyntaxArea = () => {
         // match all the {{#:x}}
         const regex = /{{(\d+):(.*?)}}/g
@@ -57,24 +68,36 @@ export default function EasyEditorComponent(props) {
         const allMatches = inputCode.match(regex)
 
         const newList = []
+        const newJson = { ...formikJson }
+        const newAnswers = [ ...answers ]
 
         // loop through the matches
         for (let i = 0; i < allMatches.length; i++) {
             newList.push(
-                <li key={i}><input type="text" onChange={e => onInputChange(i, e)}></input></li>
+                <input
+                    name={`input${i}`}
+                    id={`input${i}`}
+                    type="text"
+                    onChange={formik.handleChange}
+                    value={formik.values[`input${i}`]}
+                />
             )
+
+            // get the text between the {{#:x}}
+            const text = allMatches[i].match(/{{(\d+):(.*?)}}/)[2]
+
+            newAnswers.push(text)
+
+            // add key to formikJson
+            newJson[`input${i}`] = ''
         }
 
         const newCode = inputCode.replace(regex, '""" Input $1 here """')
 
         setCode(newCode)
         setList(newList)
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-
-        alert(inputs)
+        setFormikJson(newJson)
+        setAnswers(newAnswers)
     }
 
     useEffect(() => {
@@ -90,13 +113,20 @@ export default function EasyEditorComponent(props) {
             <SyntaxHighlighter language="python">
                 {code}
             </SyntaxHighlighter>
-            <ol>
-                {list}
-            </ol>
-            <div class="btn-group" role="group">
-                <button type="button" className="btn btn-primary" onClick={e => handleSubmit(e)}>Check Answers</button>
-                <button type="button" className="btn btn-light" href="#" role="button" onClick={closeCodingChallenge}>Close Coding Challenge</button>
-            </div>
+            <form onSubmit={formik.handleSubmit}>
+                <ol>
+                    {list.map((item, index) => {
+                        return <>
+                            <li key={index}>{item}</li>
+                            <br />
+                        </>
+                    })}
+                </ol>
+                <div class="btn-group" role="group">
+                    <button type="submit" className="btn btn-primary">Check Answers</button>
+                    <button type="button" className="btn btn-light" href="#" role="button" onClick={closeCodingChallenge}>Close Coding Challenge</button>
+                </div>
+            </form>
         </div>
     )
 }
