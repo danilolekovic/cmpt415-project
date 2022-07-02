@@ -1,5 +1,5 @@
 import Editor from "@monaco-editor/react"
-import { useRef, useState, useContext } from 'react'
+import { useRef, useState, useContext, useEffect } from 'react'
 import Context from '../context/Context'
 import axios from 'axios'
 
@@ -11,6 +11,7 @@ export default function EditorComponent(props) {
     
     const [output, setOutput] = useState([])
     const [runEnabled, setRunEnabled] = useState(true)
+    const [prompt, setPrompt] = useState([])
     const { setEditorState } = useContext(Context)
     const editorRef = useRef()
 
@@ -18,9 +19,28 @@ export default function EditorComponent(props) {
         editorRef.current = editor
     }
 
+    const convertPromptIntoList = (questionPrompt) => {
+        // break questionPrompt into lines
+        const lines = questionPrompt.split('\n')
+        const newList = []
+
+        // for each line, create a list item
+        lines.forEach((line) => {
+            newList.push(<li>{line}</li>)
+        })
+
+        setPrompt(newList)
+    }
+
     const closeCodingChallenge = () => {
         setEditorState(0)
     }
+
+    useEffect(() => {
+        const questionPrompt = "Using nested conditionals, write a program that prints out the following pattern:\nIf x is less than y, print \"x is less than y\"\nIf x is greater than y, print \"x is greater than y\"\nIf x and y are equal, print \"x and y must be equal\""
+
+        convertPromptIntoList(questionPrompt)
+    }, [])
 
     const runCode = (e) => {
         e.preventDefault()
@@ -79,8 +99,12 @@ export default function EditorComponent(props) {
 
     return (
         <div>
+            <h2>Coding Challenge</h2>
+            <ul>
+                {prompt}
+            </ul>
             <Editor
-                height="70vh"
+                height="40vh"
                 defaultLanguage="python"
                 defaultValue="# Write your code here"
                 options={options}

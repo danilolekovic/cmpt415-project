@@ -47,7 +47,7 @@ export default function EasyEditorComponent(props) {
 
             setToast({
                 title: "Correct!",
-                message: "You have completed the exercise."
+                message: "You have completed the exercise. ⭐ +100 score"
             })
 
             setCompleted(true)
