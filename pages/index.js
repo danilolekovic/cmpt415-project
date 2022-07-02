@@ -25,7 +25,11 @@ export default function Home() {
   useEffect(() => {
     const authenticatedUser = localStorage.getItem('auth')
     setUser(authenticatedUser ? JSON.parse(authenticatedUser) : null)
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    setToast(null)
+  }, [page, profileView, openedModule])
 
   if (user) {
     let currentPage = (<ModulesComponent></ModulesComponent>)
