@@ -3,4 +3,5 @@ export const Pages = {
     PROFILE: "profile",
     LOGIN: "login",
     STUDENT_PROFILE: "student-profile",
+    DISCUSSION: "discussion",
 }

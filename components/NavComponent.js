@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import Context from '../context/Context'
 import { Pages } from '../context/Pages'
 
-function NavComponent(props) {
+export default function NavComponent(props) {
     const { user, setUser, setOpenedModule, page, setPage } = useContext(Context)
 
     const handleSignOut = (e) => {
@@ -21,6 +21,12 @@ function NavComponent(props) {
         e.preventDefault()
         setOpenedModule(null)
         setPage(Pages.PROFILE)
+    }
+
+    const handleDiscussionClick = (e) => {
+        e.preventDefault()
+        setOpenedModule(null)
+        setPage(Pages.DISCUSSION)
     }
 
     const checkIfActive = (pageName) => {
@@ -44,7 +50,7 @@ function NavComponent(props) {
                         <a className={"nav-link" + checkIfActive(Pages.MODULES)} href="#" onClick={handleModulesClick}>Modules</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Discussion</a>
+                        <a className={"nav-link" + checkIfActive(Pages.DISCUSSION)} href="#" onClick={handleDiscussionClick}>Discussion</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="#">Competition</a>
@@ -77,5 +83,3 @@ function NavComponent(props) {
         </div>
     );
 }
-
-export default NavComponent

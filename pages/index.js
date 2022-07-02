@@ -7,6 +7,7 @@ import { Pages } from '../context/Pages'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import ProfileComponent from '../components/ProfileComponent'
 import StudentProfileComponent from '../components/StudentProfileComponent'
+import DiscussionComponent from '../components/DiscussionComponent'
 
 export default function Home() {
   const [user, setUser] = useState(null)
@@ -38,6 +39,8 @@ export default function Home() {
       currentPage = (<ProfileComponent></ProfileComponent>)
     } else if (page === Pages.STUDENT_PROFILE) {
       currentPage = (<StudentProfileComponent></StudentProfileComponent>)
+    } else if (page === Pages.DISCUSSION) {
+      currentPage = (<DiscussionComponent></DiscussionComponent>)
     }
 
     return (
