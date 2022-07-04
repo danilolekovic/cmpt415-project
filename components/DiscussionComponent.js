@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react"
 import Context from '../context/Context'
 import { useFormik } from 'formik'
-import { getDiscussionList, getDiscussionPost, addDiscussionPost } from "../data/Discussion"
+import { getDiscussionList, getDiscussionPost, addDiscussionPost, addDiscussionReply } from "../data/Discussion"
 
 export default function DiscussionComponent(props) {
     const { user, setToast} = useContext(Context)
@@ -56,6 +56,7 @@ export default function DiscussionComponent(props) {
             addDiscussionPost(values.title, values.content, user).then(() => {
                 loadDiscussions()
                 togglePostForm()
+
                 setToast({
                     title: "Posted!",
                     message: "Discussion posted successfully."
@@ -78,7 +79,14 @@ export default function DiscussionComponent(props) {
             return errors
         },
         onSubmit: values => {
-            // ToDo
+            addDiscussionReply(currentDiscussion.uuid, values.content, user).then(() => {
+                openDiscussion(currentDiscussion.uuid)
+
+                setToast({
+                    title: "Posted!",
+                    message: "Reply posted successfully."
+                })
+            })
         }
     })
 

@@ -1,5 +1,5 @@
 import { db } from '../firebase'
-import { query, collection, where, doc, setDoc, getDocs, serverTimestamp } from 'firebase/firestore'
+import { query, collection, where, doc, setDoc, getDocs, serverTimestamp, orderBy } from 'firebase/firestore'
 import { v4 as uuidv4 } from "uuid"
 import { getStudentById } from './Students'
 
@@ -115,7 +115,7 @@ export async function getDiscussionPost(uuid) {
     const discussion = discussionConverter.fromFirestore(querySnapshot.docs[0], { idField: "uuid" })
     const author = await getStudentById(discussion.author)
     const replies = []
-    const repiesQ = query(collection(db, "replies"), where("parent", "==", uuid))
+    const repiesQ = query(collection(db, "replies"), orderBy("date", "asc"), where("parent", "==", uuid))
     const repliesSnapshot = await getDocs(repiesQ)
 
     if (!repliesSnapshot.empty) {
@@ -128,7 +128,8 @@ export async function getDiscussionPost(uuid) {
     return {
         discussion: discussion,
         author: author,
-        replies: replies
+        replies: replies,
+        uuid: discussion.uuid
     }
 }
 
@@ -150,8 +151,8 @@ export async function addDiscussionReply(parent, content, author) {
     const uuid = uuidv4()
 
     await setDoc(doc(db, "replies", uuid), {
-        uuid: uuid,
-        parent: parent,
+        id: uuid,
+        parent: String(parent),
         content: content,
         date: serverTimestamp(),
         author: author.uuid,
