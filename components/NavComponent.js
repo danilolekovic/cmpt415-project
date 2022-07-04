@@ -1,9 +1,10 @@
 import { useContext } from 'react'
 import Context from '../context/Context'
 import { Pages } from '../context/Pages'
+import ToastComponent from './ToastComponent'
 
 export default function NavComponent(props) {
-    const { user, setUser, setOpenedModule, page, setPage } = useContext(Context)
+    const { user, setUser, setOpenedModule, page, setPage, toast } = useContext(Context)
 
     const handleSignOut = (e) => {
         e.preventDefault()
@@ -37,6 +38,16 @@ export default function NavComponent(props) {
         return ''
     }
 
+    const getToast = () => {
+        if (toast) {
+            return (
+                <ToastComponent title={toast.title} message={toast.message}></ToastComponent>
+            )
+        }
+
+        return (<></>)
+    }
+
     let navBarContents = (
         <div>
         </div>
@@ -62,6 +73,7 @@ export default function NavComponent(props) {
                 <span className="navbar-text">
                     Signed in as <a href="#">{user.name}</a>. (<a href="#" onClick={handleSignOut}>Sign out</a>)
                 </span>
+                {getToast()}
             </div>
         )
     }

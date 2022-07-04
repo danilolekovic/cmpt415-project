@@ -8,8 +8,8 @@ import EasyEditorComponent from './EasyEditorComponent'
 import LeaderboardComponent from './LeaderboardComponent'
 import ToastComponent from './ToastComponent'
 
-function ModulesComponent() {
-    const { openedModule, setOpenedModule, toast, editorState } = useContext(Context)
+export default function ModulesComponent() {
+    const { openedModule, setOpenedModule, editorState } = useContext(Context)
 
     const handleModuleStart = (e) => {
         const module = e.currentTarget.getAttribute('module')
@@ -25,16 +25,6 @@ function ModulesComponent() {
             id: module,
             json: content
         })
-    }
-
-    const getToast = () => {
-        if (toast) {
-            return (
-                <ToastComponent title={toast.title} message={toast.message}></ToastComponent>
-            )
-        }
-
-        return (<></>)
     }
 
     const getEditor = () => {
@@ -58,7 +48,6 @@ function ModulesComponent() {
     if (openedModule) {
         return (
             <div className="container mx-auto">
-                {getToast()}
                 <div className="row">
                     <div className={editorState === 0 ? "col-100" : "col-7"}>
                         <OpenModuleComponent file={openedModule} />
@@ -70,7 +59,6 @@ function ModulesComponent() {
     } else {
         return (
             <div className="container mx-auto">
-                {getToast()}
                 <div className="row">
                     <div className="col">
                         <h3>Modules</h3>
@@ -108,5 +96,3 @@ function ModulesComponent() {
         )
     }
 }
-
-export default ModulesComponent
