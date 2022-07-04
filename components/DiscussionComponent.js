@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+import Context from '../context/Context'
 import { useFormik } from 'formik'
-import { getDiscussionList, getDiscussionPost } from "../data/Discussion"
+import { getDiscussionList, getDiscussionPost, addDiscussionPost } from "../data/Discussion"
 
 export default function DiscussionComponent(props) {
+    const { user, setToast} = useContext(Context)
     const [discussions, setDiscussions] = useState([])
     const [currentDiscussion, setCurrentDiscussion] = useState(null)
     const [posting, setPosting] = useState(false)
@@ -51,7 +53,14 @@ export default function DiscussionComponent(props) {
             return errors
         },
         onSubmit: values => {
-            // ToDo
+            addDiscussionPost(values.title, values.content, user).then(() => {
+                loadDiscussions()
+                togglePostForm()
+                setToast({
+                    title: "Posted!",
+                    message: "Discussion posted successfully."
+                })
+            })
         }
     })
 

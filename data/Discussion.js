@@ -1,5 +1,6 @@
 import { db } from '../firebase'
-import { query, collection, where, getDocs } from 'firebase/firestore'
+import { query, collection, where, doc, setDoc, getDocs, serverTimestamp } from 'firebase/firestore'
+import { v4 as uuidv4 } from "uuid"
 import { getStudentById } from './Students'
 
 /**
@@ -129,4 +130,31 @@ export async function getDiscussionPost(uuid) {
         author: author,
         replies: replies
     }
+}
+
+export async function addDiscussionPost(title, content, author) {
+    const uuid = uuidv4()
+
+    await setDoc(doc(db, "discussions", uuid), {
+        uuid: uuid,
+        title: title,
+        content: content,
+        author: author.uuid,
+        date: serverTimestamp(),
+        upvoted_by: [],
+        open: true
+    })
+}
+
+export async function addDiscussionReply(parent, content, author) {
+    const uuid = uuidv4()
+
+    await setDoc(doc(db, "replies", uuid), {
+        uuid: uuid,
+        parent: parent,
+        content: content,
+        date: serverTimestamp(),
+        author: author.uuid,
+        upvoted_by: []
+    })
 }
