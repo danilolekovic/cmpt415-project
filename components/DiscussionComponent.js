@@ -20,7 +20,6 @@ export default function DiscussionComponent(props) {
     const openDiscussion = (uuid) => {
         getDiscussionPost(uuid).then(p => {
             setCurrentDiscussion(p)
-            console.log(p)
         }).catch(e => {
             console.log(e)
         })
@@ -107,9 +106,9 @@ export default function DiscussionComponent(props) {
                         </div>
                     </div>
                     {
-                        currentDiscussion.replies.map(r => {
+                        currentDiscussion.replies.map((r, index) => {
                             return (
-                                <div className="card discussion-reply">
+                                <div className="card discussion-reply" key={index}>
                                     <div className="card-body">
                                         <p className="card-text">
                                             <span><a href="#">{r.author.name}</a> &middot; {r.date.toString()}</span>
@@ -184,9 +183,9 @@ export default function DiscussionComponent(props) {
                     <br />
                     <div>
                         {
-                            discussions.map(d => {
+                            discussions.map((d, index) => {
                                 return (
-                                    <div className="card">
+                                    <div className="card" key={index}>
                                         <div className="card-body">
                                             <div className="row">
                                                 <div className="col">
