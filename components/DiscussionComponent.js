@@ -85,6 +85,8 @@ export default function DiscussionComponent(props) {
                     title: "Posted!",
                     message: "Reply posted successfully."
                 })
+
+                values.content = ""
             })
         }
     })
@@ -185,7 +187,7 @@ export default function DiscussionComponent(props) {
                         {
                             discussions.map((d, index) => {
                                 return (
-                                    <div className="card" key={index}>
+                                    <div className="card mb-4" key={index}>
                                         <div className="card-body">
                                             <div className="row">
                                                 <div className="col">
