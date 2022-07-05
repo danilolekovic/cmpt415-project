@@ -1,10 +1,10 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import Context from '../context/Context'
 import { Pages } from '../context/Pages'
 import ToastComponent from './ToastComponent'
 
 export default function NavComponent(props) {
-    const { user, setUser, setOpenedModule, page, setPage, toast } = useContext(Context)
+    const { user, setUser, setOpenedModule, page, setPage, toast, setToast } = useContext(Context)
 
     const handleSignOut = (e) => {
         e.preventDefault()
@@ -52,6 +52,12 @@ export default function NavComponent(props) {
         <div>
         </div>
     )
+
+    useEffect(() => {
+        setTimeout(() => {
+            setToast(null)
+        }, 6000)
+    }, [toast])
 
     if (user) {
         navBarContents = (
