@@ -2,13 +2,14 @@ import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
 import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
-import { checkFriendship, setRelationshipStatus } from '../data/Students.js'
+import { checkFriendship, setRelationshipStatus, getFriends } from '../data/Students.js'
 import { Friendship } from '../context/Friendship.js'
 
 export default function StudentProfileComponent(props) {
     const { user, profileView, setToast } = useContext(Context)
     const [achievements, setAchievements] = useState([])
     const [relationship, setRelationship] = useState((<></>))
+    const [friends, setFriends] = useState([])
 
     const loadAchievements = () => {
         const studentAchievements = profileView.achievements
@@ -22,6 +23,7 @@ export default function StudentProfileComponent(props) {
     const changeFriendship = (newStatus) => {
         setRelationshipStatus(user.uuid, profileView.uuid, newStatus).then(() => {
             loadRelationship()
+            getFriendsList()
             setToast({ title: "Success", message: "Friendship status updated." })
         })
     }
@@ -64,10 +66,24 @@ export default function StudentProfileComponent(props) {
         })
     }
 
+    const getFriendsList = () => {
+        getFriends(profileView, Friendship.ACCEPTED).then(f => {
+            if (f.length === 0) {
+                setFriends([(<li>No friends yet.</li>)])
+                return
+            }
+
+            setFriends(f.map((friend, index) => {
+                return (<li key={index}><a href="#">{friend.name}</a></li>)
+            })
+        )})
+    }
+
     // loadAchievements only once, as well as the friendship status
     useEffect(() => {
         loadAchievements()
         loadRelationship()
+        getFriendsList()
     }, [])
 
     return (
@@ -84,12 +100,11 @@ export default function StudentProfileComponent(props) {
                     <ul>
                         <li>Score: {profileView.score}</li>
                         <li>Level: {profileView.level}</li>
-                        <li>Streak: ...</li>
                     </ul>
                     <br />
                     <h5>Friends</h5>
                     <ul>
-                        <li>...</li>
+                        {friends}
                     </ul>
                   </div>
                   <div className="col-sm">
