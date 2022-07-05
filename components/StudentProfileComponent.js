@@ -20,16 +20,12 @@ export default function StudentProfileComponent(props) {
     }
 
     const loadRelationship = () => {
-        console.log("Checking friendship " + Friendship.ACCEPTED)
-        console.log("Checking friendship " + Friendship.REQUESTED)
         const checkAcceptance = checkFriendship(user, profileView.uuid, Friendship.ACCEPTED)
         const checkRequested = checkFriendship(user, profileView.uuid, Friendship.REQUESTED)
 
         Promise.allSettled([checkAcceptance, checkRequested]).then(results => {
             const accepted = results[0]
             const requested = results[1]
-
-            console.log("Results: " + results)
 
             if (accepted)
                 setRelationship((<div>You are friends with {profileView.name}.</div>))
