@@ -1,5 +1,5 @@
 import { db } from '../firebase'
-import { collection, query, where, getDocs, setDoc, doc, updateDoc } from 'firebase/firestore'
+import { collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 
 /**
  * Represents a student in the system
@@ -149,4 +149,79 @@ export async function giveStudentAchievement(student, achievement) {
     }
     
     return false
+}
+
+export async function getFriendsIds(student, status) {
+    // Status 1 = accepted
+
+    if (status < 0 || status > 1) {
+        return []
+    }
+
+    const oneWayQ = query(collection(db, "relationships"), where("from", "==", student.uuid), where("status", "==", status))
+    const twoWayQ = query(collection(db, "relationships"), where("to", "==", student.uuid), where("status", "==", status))
+
+    const oneWaySnapshot = await getDocs(oneWayQ)
+    const twoWaySnapshot = await getDocs(twoWayQ)
+
+    const oneWayData = oneWaySnapshot.docs.map(doc => doc.data())
+    const twoWayData = twoWaySnapshot.docs.map(doc => doc.data())
+
+    const friendsOneWay = oneWayData.map(data => data.to)
+    const friendsTwoWay = twoWayData.map(data => data.from)
+
+    const friends = friendsOneWay.concat(friendsTwoWay)
+
+    return friends
+}
+
+export async function getFriends(student, status) {
+    const friendsIds = await getFriendsIds(student, status)
+
+    const friends = []
+
+    for (const id of friendsIds) {
+        const friend = await getStudentById(id)
+        friends.push(friend)
+    }
+
+    return friends
+}
+
+export async function checkFriendship(student, friendId, status) {
+    const friendIds = await getFriendsIds(student, status)
+
+    return friendIds.includes(friendId)
+}
+
+export async function setRelationship(student1, student2, status) {
+    const firstQ = query(collection(db, "relationships"), where("from", "==", student1.uuid), where("to", "==", student2.uuid))
+    const secondQ = query(collection(db, "relationships"), where("from", "==", student2.uuid), where("to", "==", student1.uuid))
+
+    const firstSnapshot = await getDocs(firstQ)
+    const secondSnapshot = await getDocs(secondQ)
+
+    if (firstSnapshot.empty && secondSnapshot.empty) {
+        await setDoc(doc(db, "relationships", uuid()), {
+            from: student1.uuid,
+            to: student2.uuid,
+            sent: serverTimestamp,
+            responded: serverTimestamp,
+            status: status
+        })
+
+        return
+    }
+
+    if (firstSnapshot.empty) {
+        const secondDoc = secondSnapshot.docs[0]
+        await updateDoc(secondDoc, { status: status })
+        return
+    }
+
+    if (secondSnapshot.empty) {
+        const firstDoc = firstSnapshot.docs[0]
+        await updateDoc(firstDoc, { status: status })
+        return
+    }
 }
