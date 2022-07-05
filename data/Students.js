@@ -1,5 +1,6 @@
 import { db } from '../firebase'
 import { collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
+import { Friendship } from '../context/Friendship'
 
 /**
  * Represents a student in the system
@@ -168,7 +169,7 @@ export async function giveStudentScore(student, score) {
 }
 
 export async function getFriendsIds(student, status) {
-    if (status < 0 || status > 1) {
+    if (status < Friendship.NONE || status > Friendship.REJECTED) {
         return []
     }
 

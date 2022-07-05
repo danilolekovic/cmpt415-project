@@ -47,7 +47,7 @@ export default function LeaderboardComponent() {
                         loading ? <tr><td colSpan="5">Loading...</td></tr> : leaderboard.sort(function (left, right) {
                             return right.score - left.score
                         }).map((data, index) => (
-                            <tr>
+                            <tr key={index}>
                                 <th scope="row">{index + 1}</th>
                                 <td><a href="#" onClick={() => openProfile(data.uuid)}>{data.uuid === user.uuid ? "You" : data.name}</a></td>
                                 <td>{data.score}</td>

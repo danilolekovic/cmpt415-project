@@ -89,7 +89,6 @@ export async function getDiscussionList() {
 
     for (const doc of querySnapshot.docs) {
         const student = await getStudentById(doc.data().author)
-        console.log(doc.data().date)
         discussions.push(new Discussion(doc.id, doc.data().title, student, doc.data().content, dateToString(doc.data().date.toDate()), doc.data().upvoted_by))
     }
 
