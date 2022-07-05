@@ -140,10 +140,7 @@ export async function giveStudentAchievement(student, achievement) {
 
     if (!achievements.includes(achievement)) {
         achievements.push(achievement)
-        
-        // update the student's achievements
-        // todo: fix this; it's currently not working!
-        // await updateDoc(studentDoc, { achievements: achievements })
+        await updateDoc(studentDoc.ref, { achievements: achievements })
 
         return true
     }
@@ -151,9 +148,26 @@ export async function giveStudentAchievement(student, achievement) {
     return false
 }
 
-export async function getFriendsIds(student, status) {
-    // Status 1 = accepted
+export async function giveStudentScore(student, score) {
+    const q = query(collection(db, "students"), where("email", "==", student.email))
 
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+        return false
+    }
+
+    const studentDoc = querySnapshot.docs[0]
+
+    const studentData = studentDoc.data()
+    const currentScore = studentData.score
+
+    await updateDoc(studentDoc.ref, { score: currentScore + score })
+
+    return true
+}
+
+export async function getFriendsIds(student, status) {
     if (status < 0 || status > 1) {
         return []
     }
@@ -196,17 +210,17 @@ export async function checkFriendship(student, friendId, status) {
     return friendIds.includes(friendId)
 }
 
-export async function setRelationship(student1, student2, status) {
-    const firstQ = query(collection(db, "relationships"), where("from", "==", student1.uuid), where("to", "==", student2.uuid))
-    const secondQ = query(collection(db, "relationships"), where("from", "==", student2.uuid), where("to", "==", student1.uuid))
+export async function setRelationshipStatus(student1, student2, status) {
+    const firstQ = query(collection(db, "relationships"), where("from", "==", student1), where("to", "==", student2))
+    const secondQ = query(collection(db, "relationships"), where("from", "==", student2), where("to", "==", student1))
 
     const firstSnapshot = await getDocs(firstQ)
     const secondSnapshot = await getDocs(secondQ)
 
     if (firstSnapshot.empty && secondSnapshot.empty) {
         await setDoc(doc(db, "relationships", uuid()), {
-            from: student1.uuid,
-            to: student2.uuid,
+            from: student1,
+            to: student2,
             sent: serverTimestamp,
             responded: serverTimestamp,
             status: status
@@ -216,13 +230,13 @@ export async function setRelationship(student1, student2, status) {
     }
 
     if (firstSnapshot.empty) {
-        const secondDoc = secondSnapshot.docs[0]
+        const secondDoc = secondSnapshot.docs[0].ref
         await updateDoc(secondDoc, { status: status })
         return
     }
 
     if (secondSnapshot.empty) {
-        const firstDoc = firstSnapshot.docs[0]
+        const firstDoc = firstSnapshot.docs[0].ref
         await updateDoc(firstDoc, { status: status })
         return
     }
