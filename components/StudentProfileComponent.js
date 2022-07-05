@@ -2,11 +2,11 @@ import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
 import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
-import { checkFriendship } from '../data/Students.js'
+import { checkFriendship, setRelationshipStatus } from '../data/Students.js'
 import { Friendship } from '../context/Friendship.js'
 
 export default function StudentProfileComponent(props) {
-    const { user, profileView } = useContext(Context)
+    const { user, profileView, setToast } = useContext(Context)
     const [achievements, setAchievements] = useState([])
     const [relationship, setRelationship] = useState((<></>))
 
@@ -19,20 +19,48 @@ export default function StudentProfileComponent(props) {
         }))
     }
 
+    const changeFriendship = (newStatus) => {
+        setRelationshipStatus(user.uuid, profileView.uuid, newStatus).then(() => {
+            loadRelationship()
+            setToast({ title: "Success", message: "Friendship status updated." })
+        })
+    }
+
     const loadRelationship = () => {
-        const checkAcceptance = checkFriendship(user, profileView.uuid, Friendship.ACCEPTED)
-        const checkRequested = checkFriendship(user, profileView.uuid, Friendship.REQUESTED)
+        let friendshipHasUpdated = false
+        
+        checkFriendship(user, profileView.uuid, Friendship.NONE).then(result => {
+            if (result) {
+                setRelationship((<div>
+                    You are not friends with {profileView.name}. <a href="#" onClick={() => changeFriendship(Friendship.REQUESTED)}>Send a friend request.</a>
+                </div>))
 
-        Promise.allSettled([checkAcceptance, checkRequested]).then(results => {
-            const accepted = results[0]
-            const requested = results[1]
+                friendshipHasUpdated = true
+            }
+        })
 
-            if (accepted)
-                setRelationship((<div>You are friends with {profileView.name}.</div>))
-            else if (requested)
-                setRelationship((<div>You have requested to be friends with {profileView.name}.</div>))
-            else
-                setRelationship((<div>You are not friends with {profileView.name}.</div>))
+        if (friendshipHasUpdated) return
+
+        checkFriendship(user, profileView.uuid, Friendship.ACCEPTED).then(result => {
+            if (result) {
+                setRelationship((<div>
+                    You are friends with {profileView.name}. <a href="#" onClick={() => changeFriendship(Friendship.NONE)}>Unfriend.</a>
+                    </div>))
+
+                friendshipHasUpdated = true
+            }
+        })
+
+        if (friendshipHasUpdated) return
+
+        checkFriendship(user, profileView.uuid, Friendship.REQUESTED).then(result => {
+            if (result) {
+                setRelationship((<div>
+                    You have sent a friend request to {profileView.name}. <a href="#" onClick={() => changeFriendship(Friendship.NONE)}>Cancel request.</a>
+                    </div>))
+
+                friendshipHasUpdated = true
+            }
         })
     }
 
