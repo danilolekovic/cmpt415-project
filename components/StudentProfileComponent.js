@@ -2,10 +2,13 @@ import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
 import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
+import { checkFriendship } from '../data/Students.js'
+import { Friendship } from '../context/Friendship.js'
 
 export default function StudentProfileComponent(props) {
-    const { profileView } = useContext(Context)
+    const { user, profileView } = useContext(Context)
     const [achievements, setAchievements] = useState([])
+    const [relationship, setRelationship] = useState((<></>))
 
     const loadAchievements = () => {
         const studentAchievements = profileView.achievements
@@ -16,9 +19,31 @@ export default function StudentProfileComponent(props) {
         }))
     }
 
-    // loadAchievements only once
+    const loadRelationship = () => {
+        console.log("Checking friendship " + Friendship.ACCEPTED)
+        console.log("Checking friendship " + Friendship.REQUESTED)
+        const checkAcceptance = checkFriendship(user, profileView.uuid, Friendship.ACCEPTED)
+        const checkRequested = checkFriendship(user, profileView.uuid, Friendship.REQUESTED)
+
+        Promise.allSettled([checkAcceptance, checkRequested]).then(results => {
+            const accepted = results[0]
+            const requested = results[1]
+
+            console.log("Results: " + results)
+
+            if (accepted)
+                setRelationship((<div>You are friends with {profileView.name}.</div>))
+            else if (requested)
+                setRelationship((<div>You have requested to be friends with {profileView.name}.</div>))
+            else
+                setRelationship((<div>You are not friends with {profileView.name}.</div>))
+        })
+    }
+
+    // loadAchievements only once, as well as the friendship status
     useEffect(() => {
         loadAchievements()
+        loadRelationship()
     }, [])
 
     return (
@@ -29,7 +54,7 @@ export default function StudentProfileComponent(props) {
                 <div className="row">
                   <div className="col-sm">
                     <h4>{profileView.isAnonymous ? profileView.anonymousName : profileView.name}</h4>
-                    <a href="#">Send Friend Request</a>
+                    {relationship}
                     <br /><br />
                     <h5>Student</h5>
                     <ul>

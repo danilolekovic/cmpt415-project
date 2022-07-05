@@ -158,6 +158,9 @@ export async function getFriendsIds(student, status) {
         return []
     }
 
+    console.log("from == " + student.uuid + " && status == " + status)
+    console.log("to == " + student.uuid + " && status == " + status)
+
     const oneWayQ = query(collection(db, "relationships"), where("from", "==", student.uuid), where("status", "==", status))
     const twoWayQ = query(collection(db, "relationships"), where("to", "==", student.uuid), where("status", "==", status))
 
@@ -190,6 +193,8 @@ export async function getFriends(student, status) {
 
 export async function checkFriendship(student, friendId, status) {
     const friendIds = await getFriendsIds(student, status)
+
+    if (friendIds.length === 0) return false
 
     return friendIds.includes(friendId)
 }
