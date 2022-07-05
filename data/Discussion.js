@@ -77,7 +77,7 @@ import { getStudentById } from './Students'
 }
 
 export async function getDiscussionList() {
-    const q = collection(db, "discussions")
+    const q = query(collection(db, "discussions"), orderBy("date", "desc"))
 
     const querySnapshot = await getDocs(q)
 
