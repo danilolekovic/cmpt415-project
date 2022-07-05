@@ -2,10 +2,13 @@ import { useContext, useState, useEffect } from 'react'
 import Context from '../context/Context'
 import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
+import { getFriends } from '../data/Students.js'
+import { Friendship } from '../context/Friendship.js'
 
 export default function ProfileComponent(props) {
     const { user } = useContext(Context)
     const [achievements, setAchievements] = useState([])
+    const [friends, setFriends] = useState([])
 
     const loadAchievements = () => {
         const studentAchievements = user.achievements
@@ -16,8 +19,22 @@ export default function ProfileComponent(props) {
         }))
     }
 
+    const getFriendsList = () => {
+        getFriends(user, Friendship.ACCEPTED).then(f => {
+            if (f.length === 0) {
+                setFriends([(<li>No friends yet.</li>)])
+                return
+            }
+
+            setFriends(f.map((friend, index) => {
+                return (<li key={index}><a href="#">{friend.name}</a></li>)
+            })
+        )})
+    }
+
     useEffect(() => {
         loadAchievements()
+        getFriendsList()
     }, [])
 
     return (
@@ -35,12 +52,11 @@ export default function ProfileComponent(props) {
                     <ul>
                         <li>Score: {user.score}</li>
                         <li>Level: {user.level}</li>
-                        <li>Streak: ...</li>
                     </ul>
                     <br />
                     <h5>Friends</h5>
                     <ul>
-                        <li>...</li>
+                        {friends}
                     </ul>
                   </div>
                   <div className="col-sm">
