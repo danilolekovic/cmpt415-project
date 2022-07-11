@@ -1,5 +1,5 @@
 import { db } from '../firebase'
-import { collection, getDocs, query } from 'firebase/firestore'
+import { collection, getDocs, query, where, updateDoc } from 'firebase/firestore'
 
 /**
  * Represents a personalization set in the system
@@ -7,9 +7,9 @@ import { collection, getDocs, query } from 'firebase/firestore'
  * @typedef {Object} Personalization
  */
  export class Personalization {
-    constructor(uuid, leaderboard) {
+    constructor(uuid, leaderboards) {
         this.uuid = uuid
-        this.leaderboard = leaderboard
+        this.leaderboards = leaderboards
     }
 }
 
@@ -21,12 +21,12 @@ const personalizationConverter = {
     toFirestore: function (p) {
         return {
             uuid: p.uuid,
-            leaderboard: p.leaderboard
+            leaderboards: p.leaderboards
         }
     },
     fromFirestore: function (snapshot, options) {
         const data = snapshot.data(options)
-        return new Personalization(data.uuid, data.leaderboard)
+        return new Personalization(data.uuid, data.leaderboards)
     }
 }
 
@@ -45,4 +45,21 @@ const personalizationConverter = {
     }
 
     return personalizationConverter.fromFirestore(querySnapshot.docs[0], { idField: "uuid" })
+}
+
+
+export async function changePersonalization(uuid, value) {
+    const q = query(collection(db, "personalization"), where("uuid", "==", uuid))
+
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+        return false
+    }
+
+    const doc = querySnapshot.docs[0]
+
+    await updateDoc(doc.ref, personalizationConverter.toFirestore(value))
+
+    return true
 }

@@ -15,6 +15,7 @@ export default function Home() {
   const [toast, setToast] = useState(null)
   const [profileView, setProfileView] = useState(null)
   const [openedModule, setOpenedModule] = useState(null)
+  const [personalization, setPersonalization] = useState(null)
 
   /**
    * 0 => invisible
@@ -22,6 +23,23 @@ export default function Home() {
    * 2 => normal editor
    */
   const [editorState, setEditorState] = useState(0)
+
+  const contexts = {
+    user,
+    setUser,
+    openedModule,
+    setOpenedModule,
+    page,
+    setPage,
+    profileView,
+    setProfileView,
+    toast,
+    setToast,
+    editorState,
+    setEditorState,
+    personalization,
+    setPersonalization
+  }
 
   useEffect(() => {
     const authenticatedUser = localStorage.getItem('auth')
@@ -44,14 +62,14 @@ export default function Home() {
     }
 
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast, editorState, setEditorState}}>
+      <Context.Provider value={contexts}>
         <NavComponent />
         {currentPage}
       </Context.Provider>
     )
   } else {
     return (
-      <Context.Provider value={{user, setUser, openedModule, setOpenedModule, page, setPage, profileView, setProfileView, toast, setToast, editorState, setEditorState}}>
+      <Context.Provider value={contexts}>
         <NavComponent />
         <LoginComponent />
       </Context.Provider>

@@ -5,6 +5,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter'
 
 export default function EasyEditorComponent(props) {
     const inputCode = "x = 10\ny = 10\n\nif {{1:x<y}}:\n    print(\"x is less than y\")\nelse:\n    if {{2:x>y}}:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
+    const question = "Using nested conditionals, write a program that prints out the following pattern:\nIf x is less than y, print \"x is less than y\"\nIf x is greater than y, print \"x is greater than y\"\nIf x and y are equal, print \"x and y must be equal\""
     const [prompt, setPrompt] = useState([])
     const [code, setCode] = useState('')
     const [list, setList] = useState([])
@@ -76,9 +77,7 @@ export default function EasyEditorComponent(props) {
     }
 
     useEffect(() => {
-        const questionPrompt = "Using nested conditionals, write a program that prints out the following pattern:\nIf x is less than y, print \"x is less than y\"\nIf x is greater than y, print \"x is greater than y\"\nIf x and y are equal, print \"x and y must be equal\""
-
-        convertPromptIntoList(questionPrompt)
+        convertPromptIntoList(question)
     }, [])
 
     const convertCodeToSyntaxArea = () => {
