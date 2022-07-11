@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
-import { getLeaderboard } from "../data/Gamification"
+import { getFriendsLeaderboard } from "../data/Gamification"
 import { getStudentById } from "../data/Students"
 import { Pages } from '../context/Pages'
 
@@ -22,7 +22,7 @@ export default function LeaderboardComponent() {
     }
 
     useEffect(() => {
-        getLeaderboard().then(l => {
+        getFriendsLeaderboard(user).then(l => {
             setLoading(false)
             setLeaderboard(l)
         })

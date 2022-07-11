@@ -1,5 +1,7 @@
 import { db } from '../firebase'
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
+import { getFriends } from './Students'
+import { Friendship } from '../context/Friendship'
 
 export async function getLeaderboard() {
     const q = query(collection(db, "students"), orderBy("score"), limit(3))
@@ -13,4 +15,19 @@ export async function getLeaderboard() {
             score: data.score,
         }
     })
+}
+
+export async function getFriendsLeaderboard(user) {
+    const [friends, leaderboard] = await Promise.all([
+        getFriends(user, Friendship.ACCEPTED),
+        getLeaderboard()
+    ])
+
+    const friendsIds = friends.map(friend => friend.uuid)
+
+    const filteredLeaderboard = leaderboard.filter(leaderboardUser => {
+        return friendsIds.includes(leaderboardUser.uuid) || leaderboardUser.uuid === user.uuid
+    })
+
+    return filteredLeaderboard
 }
