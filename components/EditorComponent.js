@@ -61,7 +61,7 @@ export default function EditorComponent(props) {
             headers: {
               'content-type': 'application/json',
               'Content-Type': 'application/json',
-              'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+              'X-RapidAPI-Key': process.env.NEXT_PUBLIC_RAPIDAPI_KEY,
               'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
             },
             data: '{"language_id":71,"source_code":"' + s + '","stdin":"SnVkZ2Uw"}'
@@ -75,7 +75,7 @@ export default function EditorComponent(props) {
                 url: 'https://judge0-ce.p.rapidapi.com/submissions/' + token,
                 params: {base64_encoded: 'true', fields: '*'},
                 headers: {
-                    'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_RAPIDAPI_KEY,
                     'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
                 }
               }
