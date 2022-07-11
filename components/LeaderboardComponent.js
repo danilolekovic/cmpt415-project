@@ -6,6 +6,8 @@ import { Personalization, getPersonalization, changePersonalization } from "../d
 import { PersonalizationSetting } from '../context/PersonalizationSetting'
 import { Pages } from '../context/Pages'
 import PersonalizationComponent from './PersonalizationComponent'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function LeaderboardComponent() {
     const { user, setPage, setProfileView, personalization, setPersonalization } = useContext(Context)
@@ -88,5 +90,5 @@ export default function LeaderboardComponent() {
         )
     }
 
-    return (<></>)
+    return (<Skeleton count={5}></Skeleton>)
 }

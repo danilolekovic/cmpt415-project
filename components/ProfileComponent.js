@@ -4,11 +4,13 @@ import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
 import { getFriends } from '../data/Students.js'
 import { Friendship } from '../context/Friendship.js'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function ProfileComponent(props) {
     const { user } = useContext(Context)
     const [achievements, setAchievements] = useState([])
-    const [friends, setFriends] = useState([])
+    const [friends, setFriends] = useState(null)
 
     const loadAchievements = () => {
         const studentAchievements = user.achievements
@@ -20,6 +22,7 @@ export default function ProfileComponent(props) {
     }
 
     const getFriendsList = () => {
+        setFriends([])
         getFriends(user, Friendship.ACCEPTED).then(f => {
             if (f.length === 0) {
                 setFriends([(<li>No friends yet.</li>)])
@@ -30,6 +33,18 @@ export default function ProfileComponent(props) {
                 return (<li key={index}><a href="#">{friend.name}</a></li>)
             })
         )})
+    }
+
+    const getFriendsElement = () => {
+        if (friends === null) {
+            return (<Skeleton count={3}></Skeleton>)
+        } else {
+            return (
+                <ul>
+                    {friends}
+                </ul>
+            )
+        }
     }
 
     useEffect(() => {
@@ -55,9 +70,9 @@ export default function ProfileComponent(props) {
                     </ul>
                     <br />
                     <h5>Friends</h5>
-                    <ul>
-                        {friends}
-                    </ul>
+                    {
+                        getFriendsElement()
+                    }
                   </div>
                   <div className="col-sm">
                     <h4>Modules</h4>
