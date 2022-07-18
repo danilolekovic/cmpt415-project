@@ -22,8 +22,15 @@
                 },
                 {
                     "type": "challenge",
+                    "id": "nested_conditionals_1",
                     "value": "Using nested conditionals, write a program that prints out the following pattern:\n- If x is less than y, print \"x is less than y\"\n- If x is greater than y, print \"x is greater than y\"\n- If x and y are equal, print \"x and y must be equal\"",
                     "code": "x = 10\ny = 10\n\nif ({{1:x<y}}):\n    print(\"x is less than y\")\nelse:\n    if {{2:x<y}}:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
+                },
+                {
+                    "type": "challenge",
+                    "id": "nested_conditionals_2",
+                    "value": "Using nested conditionals, write a program that prints out the following pattern:\n- If x is equal to y, print \"x is equal to y\"\n- If x is greater than y, print \"x is greater than y\"\n- If x and y are equal, print \"x and y must be equal\"",
+                    "code": "x = 10\ny = 10\n\nif ({{1:x==y}}):\n    print(\"x is less than y\")\nelse:\n    if {{2:x<y}}:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
                 },
                 {
                     "type": "mc",
@@ -35,10 +42,6 @@
                         {
                             "type": "code",
                             "value": "x = 10\ny = 10\nif x < y:\n    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
-                        },
-                        {
-                            "type": "html",
-                            "value": "Check your answer by putting the code into the editor on the right."
                         }
                     ],
                     "answers": [

@@ -1,18 +1,17 @@
 import { useEffect, useState, useContext } from 'react'
 import { useFormik } from 'formik'
+import { Personalization, changePersonalization } from '../data/Personalization'
 import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
 export default function EasyEditorComponent(props) {
-    const inputCode = "x = 10\ny = 10\n\nif {{1:x<y}}:\n    print(\"x is less than y\")\nelse:\n    if {{2:x>y}}:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
-    const question = "Using nested conditionals, write a program that prints out the following pattern:\nIf x is less than y, print \"x is less than y\"\nIf x is greater than y, print \"x is greater than y\"\nIf x and y are equal, print \"x and y must be equal\""
+    const { user, setEditorState, setToast, challengeData, setChallengeData, personalization, setPersonalization } = useContext(Context)
     const [prompt, setPrompt] = useState([])
-    const [code, setCode] = useState('')
+    const [code, setCode] = useState(challengeData.code + "")
     const [list, setList] = useState([])
     const [answers, setAnswers] = useState([])
     const [completed, setCompleted] = useState(false)
     const [formikJson, setFormikJson] = useState({})
-    const { setEditorState, setToast } = useContext(Context)
 
     const formik = useFormik({
         initialValues: formikJson,
@@ -51,12 +50,18 @@ export default function EasyEditorComponent(props) {
                 message: "You have completed the exercise. ⭐ +100 score"
             })
 
+            // Update personalization
+            const newChallenges = [...personalization.challenges, challengeData.id]
+            const newPersonalization = new Personalization(personalization.uuid, personalization.leaderboards, newChallenges)
+            setPersonalization(newPersonalization)
+            changePersonalization(user.uuid, newPersonalization)
+
             setCompleted(true)
         },
     })
 
     useEffect(() => {
-        setCode(inputCode)
+        setCode(challengeData.code)
     }, [])
 
     const convertPromptIntoList = (questionPrompt) => {
@@ -77,7 +82,7 @@ export default function EasyEditorComponent(props) {
     }
 
     useEffect(() => {
-        convertPromptIntoList(question)
+        convertPromptIntoList(challengeData.question)
     }, [])
 
     const convertCodeToSyntaxArea = () => {
@@ -85,7 +90,7 @@ export default function EasyEditorComponent(props) {
         const regex = /{{(\d+):(.*?)}}/g
 
         // get all the matches
-        const allMatches = inputCode.match(regex)
+        const allMatches = challengeData.code.match(regex)
 
         const newList = []
         const newJson = { ...formikJson }
@@ -112,7 +117,7 @@ export default function EasyEditorComponent(props) {
             newJson[`input${i}`] = ''
         }
 
-        const newCode = inputCode.replace(regex, '""" Input $1 here """')
+        const newCode = code.replace(regex, '""" Input $1 here """')
 
         setCode(newCode)
         setList(newList)

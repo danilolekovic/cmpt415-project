@@ -8,14 +8,18 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import ProfileComponent from '../components/ProfileComponent'
 import StudentProfileComponent from '../components/StudentProfileComponent'
 import DiscussionComponent from '../components/DiscussionComponent'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function Home() {
+  const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const [page, setPage] = useState(null)
   const [toast, setToast] = useState(null)
   const [profileView, setProfileView] = useState(null)
   const [openedModule, setOpenedModule] = useState(null)
   const [personalization, setPersonalization] = useState(null)
+  const [challengeData, setChallengeData] = useState(null)
 
   /**
    * 0 => invisible
@@ -38,12 +42,16 @@ export default function Home() {
     editorState,
     setEditorState,
     personalization,
-    setPersonalization
+    setPersonalization,
+    challengeData,
+    setChallengeData
   }
 
   useEffect(() => {
     const authenticatedUser = localStorage.getItem('auth')
-    setUser(authenticatedUser ? JSON.parse(authenticatedUser) : null)
+    setUser(authenticatedUser ? JSON.parse(authenticatedUser) : null, () => {
+      setLoading(false)
+    })
   }, [])
 
   useEffect(() => {
@@ -68,11 +76,22 @@ export default function Home() {
       </Context.Provider>
     )
   } else {
-    return (
-      <Context.Provider value={contexts}>
-        <NavComponent />
-        <LoginComponent />
-      </Context.Provider>
-    )
+    if (loading) {
+      return (
+        <Context.Provider value={contexts}>
+          <NavComponent />
+          <div className="h-100 d-flex align-items-center justify-content-center">
+            <Skeleton circle={true} width={50} height={50}></Skeleton>
+          </div>
+        </Context.Provider>
+      )
+    } else {
+      return (
+        <Context.Provider value={contexts}>
+          <NavComponent />
+          <LoginComponent />
+        </Context.Provider>
+      )
+    }
   }
 }

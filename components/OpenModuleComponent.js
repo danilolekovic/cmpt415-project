@@ -1,17 +1,29 @@
 import { useEffect, useState, useContext, memo } from 'react'
 import { checkStudentHasAchievement, giveStudentAchievement } from '../data/Students'
+import { Personalization, getPersonalization } from "../data/Personalization"
 import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
-    const { user, setUser, setToast, setEditorState } = useContext(Context)
+    const { user, setUser, setToast, setEditorState, challengeData, setChallengeData, personalization, setPersonalization } = useContext(Context)
     const [elements, setElements] = useState([])
     const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
     const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
     const [currentPage, setCurrentPage] = useState(0)
     const [pagination, setPagination] = useState([])
     const [lessonTime, setLessonTime] = useState('')
+    const [showLecture, setShowLecture] = useState(false)
+
+    let createdChallengeBlock = false
+
+    useEffect(() => {
+        getPersonalization(user.uuid).then(p => {
+            setPersonalization(p)
+        })
+    }, [])
 
     const getCurrentPageBody = () => {
         const currentPageBody = moduleJson.body.find(body => body.page === currentPage)
@@ -98,13 +110,40 @@ function OpenModuleComponent(props) {
         // Parse the module's body
         const moduleBody = getCurrentPageBody()
         let divs = []
+        let allChallenges = []
+        let incompleteChallenges = []
+
+        if (personalization === null) {
+            getPersonalization(user.uuid).then(p => {
+                setPersonalization(p)
+            })
+        }
+
+        // get all id's from personalization
+        const personalizationIds = personalization.challenges || []
 
         // loop through each element in the module body
         for (let i = 0; i < moduleBody.length; i++) {
-            divs.push(transformJsonToHtml(moduleBody, i))
+            const getChallenge = loadAllChallenges(moduleBody, i)
+
+            if (getChallenge !== null) {
+                if (!personalizationIds.includes(getChallenge.id)) {
+                    incompleteChallenges.push(getChallenge)
+                }
+            }
+
+            divs.push(transformJsonToHtml(moduleBody, i, showLecture))
         }
 
         setElements(divs)
+
+        const randomChallenge = incompleteChallenges[Math.floor(Math.random() * incompleteChallenges.length)]
+
+        setChallengeData({
+            id: randomChallenge.id,
+            code: randomChallenge.code,
+            question: randomChallenge.value
+        })
     }
 
     const openCodingChallenge = (editorType) => {
@@ -113,7 +152,7 @@ function OpenModuleComponent(props) {
 
         if (editorType > 2)
             editorType = 2
-
+        
         setEditorState(editorType)
     }
 
@@ -171,28 +210,44 @@ function OpenModuleComponent(props) {
         const time = Math.ceil(words / wpm)
         setLessonTime(time + " minute(s)")
     }
+    
+    const loadAllChallenges = (moduleBody, index) => {
+        const element = moduleBody[index]
 
-    const transformJsonToHtml = (moduleBody, index) => {
+        if (element['type'] === 'challenge') {
+            const c = {
+                id: element['id'],
+                value: element['value'],
+                code: element['code'],
+            }
+
+            return c
+        }
+
+        return null
+    }
+
+    const transformJsonToHtml = (moduleBody, index, addContent) => {
         let divs = []
 
         const element = moduleBody[index]
 
         // If the element is a header element, add it to the html
-        if (element['type'] === 'header') {
+        if (element['type'] === 'header' && addContent) {
             divs.push(
                 <h3>{element['value']}</h3>
             )
         }
 
         // If the element is a html element, add it to the html
-        if (element['type'] === 'html') {
+        if (element['type'] === 'html' && addContent) {
             divs.push((
                 <span>{element['value']}<br /></span>
             ))
         }
 
         // If the element is a code element, add it to the html
-        if (element['type'] === 'code') {
+        if (element['type'] === 'code' && addContent) {
             const value = element['value']
 
             divs.push(
@@ -200,22 +255,6 @@ function OpenModuleComponent(props) {
                     <SyntaxHighlighter language="python">
                         {value}
                     </SyntaxHighlighter>
-                </div>
-            )
-        }
-
-        // If the element is a challenge, add a 'start coding challenge' button
-        if (element['type'] === 'challenge') {
-            const value = element['value']
-
-            divs.push(
-                <div className="code-challenge-box">
-                    <h3>Coding Challenge</h3>
-                    <p>Would you like to start a coding challenge? Completing a coding challenge is optional, but can earn you achievements and/or points.</p>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-success" onClick={() => openCodingChallenge(2)}>Easier (Fill-in-the-Blanks)</button>
-                        <button type="button" class="btn btn-warning" onClick={() => openCodingChallenge(1)}>Harder (Code Everything)</button>
-                    </div>
                 </div>
             )
         }
@@ -229,7 +268,7 @@ function OpenModuleComponent(props) {
             const mcAnswerDivs = []
 
             for (let i = 0; i < mcBody.length; i++) {
-                mcDivs.push(transformJsonToHtml(mcBody, i))
+                mcDivs.push(transformJsonToHtml(mcBody, i, true))
             }
 
             setMcQuestionNumber(mcQuestionNumber + 1)
@@ -264,7 +303,7 @@ function OpenModuleComponent(props) {
         }
 
         // If the element is a image element, add it to the html
-        if (element['type'] === 'image') {
+        if (element['type'] === 'image' && addContent) {
             divs.push(
                 <div className="module-image">
                     <img src={element['value']} />
@@ -272,9 +311,11 @@ function OpenModuleComponent(props) {
             )
         }
 
-        divs.push(
-            <br />
-        )
+        if (addContent) {
+            divs.push(
+                <br />
+            )
+        }
 
         return divs
     }
@@ -285,11 +326,23 @@ function OpenModuleComponent(props) {
         handlePagination()
     }, [currentPage])
 
+    if (elements.length === 0) {
+        return (<Skeleton count={5}></Skeleton>)
+    }
+
     return (
         <div>
             <h2>{getPageTitle(currentPage)}</h2>
             <h6>Lesson {currentPage + 1}/{moduleJson.body.length} &middot; Estimated time to complete lesson: {lessonTime}</h6>
             {elements}
+            <div className="code-challenge-box">
+                    <h3>Coding Challenge</h3>
+                    <p>Would you like to start a coding challenge? Completing a coding challenge is optional, but can earn you achievements and/or points.</p>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success" onClick={() => openCodingChallenge(2)}>Easier (Fill-in-the-Blanks)</button>
+                        <button type="button" class="btn btn-warning" onClick={() => openCodingChallenge(1)}>Harder (Code Everything)</button>
+                    </div>
+                </div>
             <nav>
                 <ul className="pagination justify-content-center">
                     {pagination}

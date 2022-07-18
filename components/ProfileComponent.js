@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import Context from '../context/Context'
+import UserLinkComponent from './UserLinkComponent'
 import AchievementComponent from '../components/AchievementComponent'
 import achievementsJson from '../data/achievements.json'
 import { getFriends } from '../data/Students.js'
@@ -30,7 +31,7 @@ export default function ProfileComponent(props) {
             }
 
             setFriends(f.map((friend, index) => {
-                return (<li key={index}><a href="#">{friend.name}</a></li>)
+                return (<li key={index}><UserLinkComponent uuid={friend.uuid} name={friend.name} /></li>)
             })
         )})
     }

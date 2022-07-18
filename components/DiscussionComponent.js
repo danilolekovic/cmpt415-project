@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react"
 import Context from '../context/Context'
 import { useFormik } from 'formik'
 import { getDiscussionList, getDiscussionPost, addDiscussionPost, addDiscussionReply } from "../data/Discussion"
+import UserLinkComponent from "./UserLinkComponent"
 
 export default function DiscussionComponent(props) {
     const { user, setToast} = useContext(Context)
@@ -95,13 +96,13 @@ export default function DiscussionComponent(props) {
         return (
             <div className="container mx-auto">
                 <h3>{currentDiscussion.discussion.title}</h3>
-                <p>Posted by <a href="#">{currentDiscussion.author.name}</a> on {currentDiscussion.discussion.date.toString()}. <a href="#" onClick={() => openDiscussion(null)}>Return to discussions.</a></p>
+                <p>Posted by <UserLinkComponent uuid={currentDiscussion.author.uuid} name={currentDiscussion.author.name} /> on {currentDiscussion.discussion.date.toString()}. <a href="#" onClick={() => openDiscussion(null)}>Return to discussions.</a></p>
                 <hr />
                 <div className="container">
                     <div className="card discussion-original-post">
                         <div className="card-body">
                             <p className="card-text">
-                                <span><a href="#">{currentDiscussion.author.name}</a></span>
+                                <span><UserLinkComponent uuid={currentDiscussion.author.uuid} name={currentDiscussion.author.name} /></span>
                                 <br />
                                 {currentDiscussion.discussion.content}
                             </p>
@@ -113,7 +114,7 @@ export default function DiscussionComponent(props) {
                                 <div className="card discussion-reply" key={index}>
                                     <div className="card-body">
                                         <p className="card-text">
-                                            <span><a href="#">{r.author.name}</a> &middot; {r.date.toString()}</span>
+                                            <span><UserLinkComponent uuid={r.author.uuid} name={r.author.name} /> &middot; {r.date.toString()}</span>
                                             <br />
                                             {r.content}
                                         </p>
@@ -194,7 +195,7 @@ export default function DiscussionComponent(props) {
                                                     <a href="#" onClick={e => openDiscussion(d.uuid)}>{d.title}</a>
                                                 </div>
                                                 <div className="col">
-                                                    <span>Posted by <a href="#">{d.author.name}</a></span>
+                                                    <span>Posted by <UserLinkComponent uuid={d.author.uuid} name={d.author.name} /></span>
                                                 </div>
                                             </div>
                                         </div>

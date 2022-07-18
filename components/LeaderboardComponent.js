@@ -1,30 +1,17 @@
 import { useState, useEffect, useContext } from 'react'
 import Context from '../context/Context'
 import { getFriendsLeaderboard } from "../data/Gamification"
-import { getStudentById } from "../data/Students"
 import { Personalization, getPersonalization, changePersonalization } from "../data/Personalization"
 import { PersonalizationSetting } from '../context/PersonalizationSetting'
-import { Pages } from '../context/Pages'
 import PersonalizationComponent from './PersonalizationComponent'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import UserLinkComponent from './UserLinkComponent'
 
 export default function LeaderboardComponent() {
-    const { user, setPage, setProfileView, personalization, setPersonalization } = useContext(Context)
+    const { user, personalization, setPersonalization } = useContext(Context)
     const [loading, setLoading] = useState(true)
     const [leaderboard, setLeaderboard] = useState([])
-
-    const openProfile = (uuid) => {
-        if (user.uuid === uuid) {
-            setPage(Pages.PROFILE)
-            return
-        }
-
-        getStudentById(uuid).then(student => {
-            setProfileView(student)
-            setPage(Pages.STUDENT_PROFILE)
-        })
-    }
 
     const loadPersonalization = () => {
         if (personalization === null) {
@@ -36,7 +23,7 @@ export default function LeaderboardComponent() {
 
     const setLeaderboardPersonalization = (show) => {
         const value = show ? PersonalizationSetting.YES : PersonalizationSetting.NO
-        const newPersonalization = new Personalization(user.uuid, value)
+        const newPersonalization = new Personalization(user.uuid, value, personalization.challenges || [])
 
         setPersonalization(newPersonalization)
         changePersonalization(user.uuid, newPersonalization)
@@ -77,7 +64,7 @@ export default function LeaderboardComponent() {
                             }).map((data, index) => (
                                 <tr key={index}>
                                     <th scope="row">{index + 1}</th>
-                                    <td><a href="#" onClick={() => openProfile(data.uuid)}>{data.uuid === user.uuid ? "You" : data.name}</a></td>
+                                    <td><UserLinkComponent uuid={data.uuid} name={data.name} /></td>
                                     <td>{data.score}</td>
                                     <td>{data.level}</td>
                                     <td>{data.achievements.length}</td>
