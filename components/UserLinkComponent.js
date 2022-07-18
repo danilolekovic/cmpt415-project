@@ -24,7 +24,7 @@ export default function UserLinkComponent(props) {
     useEffect(() => {
         setDisplayName(props.name)
 
-        if (user.uuid === props.uuid) {
+        if (user.uuid === props.uuid && !props.showOwnName) {
             setDisplayName('You')
         }
     }, [])

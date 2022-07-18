@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react'
 import Context from '../context/Context'
 import { Pages } from '../context/Pages'
 import ToastComponent from './ToastComponent'
+import UserLinkComponent from './UserLinkComponent'
 
 export default function NavComponent(props) {
     const { user, setUser, setOpenedModule, page, setPage, toast, setToast } = useContext(Context)
@@ -77,7 +78,7 @@ export default function NavComponent(props) {
                     </li>
                 </ul>
                 <span className="navbar-text">
-                    Signed in as <a href="#">{user.name}</a>. (<a href="#" onClick={handleSignOut}>Sign out</a>)
+                    Signed in as <UserLinkComponent uuid={user.uuid} name={user.name} showOwnName={true}/>. (<a href="#" onClick={handleSignOut}>Sign out</a>)
                 </span>
                 {getToast()}
             </div>
