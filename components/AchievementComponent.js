@@ -1,3 +1,8 @@
+/**
+ * An achievement component.
+ * @param {id, description, emoji} props 
+ * @returns HTML representation of an achievement
+ */
 export default function AchievementComponent(props) {
     const id = props.id
     const description = props.description

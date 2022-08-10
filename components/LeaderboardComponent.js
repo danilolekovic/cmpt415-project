@@ -23,7 +23,7 @@ export default function LeaderboardComponent() {
 
     const setLeaderboardPersonalization = (show) => {
         const value = show ? PersonalizationSetting.YES : PersonalizationSetting.NO
-        const newPersonalization = new Personalization(user.uuid, value, personalization.challenges || [])
+        const newPersonalization = new Personalization(user.uuid, value, personalization.challenges || [], personalization.shownModules || [])
 
         setPersonalization(newPersonalization)
         changePersonalization(user.uuid, newPersonalization)

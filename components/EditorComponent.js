@@ -3,22 +3,40 @@ import { useRef, useState, useContext, useEffect } from 'react'
 import Context from '../context/Context'
 import axios from 'axios'
 
+/**
+ * The editor component for coding challenges.
+ * @param {*} props 
+ * @returns HTML for the editor
+ */
 export default function EditorComponent(props) {
     const options = {
         fontSize: "14px",
         minimap: { enabled: false }
     }
     
+    // State for the code's output
     const [output, setOutput] = useState([])
+
+    // State for if the code can be ran right now
     const [runEnabled, setRunEnabled] = useState(true)
+
+    // State for the prompt
     const [prompt, setPrompt] = useState([])
+
+    // Context used: editor state
     const { setEditorState } = useContext(Context)
+
+    // Ref for the editor element
     const editorRef = useRef()
 
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor
     }
 
+    /**
+     * Converts the prompt into a list of tasks
+     * @param {*} questionPrompt 
+     */
     const convertPromptIntoList = (questionPrompt) => {
         // break questionPrompt into lines
         const lines = questionPrompt.split('\n')
@@ -32,6 +50,9 @@ export default function EditorComponent(props) {
         setPrompt(newList)
     }
 
+    /**
+     * Closes the editor.
+     */
     const closeCodingChallenge = () => {
         setEditorState(0)
     }
@@ -42,6 +63,9 @@ export default function EditorComponent(props) {
         convertPromptIntoList(questionPrompt)
     }, [])
 
+    /**
+     * Runs the code and updates the output.
+     */
     const runCode = (e) => {
         e.preventDefault()
         setRunEnabled(false)
@@ -54,6 +78,7 @@ export default function EditorComponent(props) {
         var b = Buffer.from(editorText)
         var s = b.toString('base64')   
 
+        // Code is sent to the Rapid API server to be run
         const options = {
             method: 'POST',
             url: 'https://judge0-ce.p.rapidapi.com/submissions',
@@ -66,6 +91,8 @@ export default function EditorComponent(props) {
             },
             data: '{"language_id":71,"source_code":"' + s + '","stdin":"SnVkZ2Uw"}'
           }
+
+          // Send the code to the server
 
           axios.request(options).then(function (response) {
               const token = response.data.token
@@ -81,6 +108,7 @@ export default function EditorComponent(props) {
               }
               
               axios.request(getOptions).then(function (response2) {
+                // Receive output and update state
                 const out = response2.data.stdout
                 const b = Buffer.from(out, 'base64')
                 const s = b.toString('ascii')

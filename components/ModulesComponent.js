@@ -6,14 +6,19 @@ import OpenModuleComponent from './OpenModuleComponent'
 import EditorComponent from './EditorComponent'
 import EasyEditorComponent from './EasyEditorComponent'
 import LeaderboardComponent from './LeaderboardComponent'
-import ToastComponent from './ToastComponent'
 
+/**
+ * Component for a module and the list of modules.
+ * @returns HTML for a module.
+ */
 export default function ModulesComponent() {
     const { openedModule, setOpenedModule, editorState } = useContext(Context)
 
     const handleModuleStart = (e) => {
         const module = e.currentTarget.getAttribute('module')
         let content;
+
+        // ToDo: Load all modules in modules folder
 
         if (module === 'conditional_statements') {
             content = conditionalStatementsJson
@@ -27,6 +32,10 @@ export default function ModulesComponent() {
         })
     }
 
+    /**
+     * Returns the editor for the module.
+     * Can be either an EasyEditorComponent or an EditorComponent.
+     */
     const getEditor = () => {
         if (editorState === 0) {
             return (<></>)

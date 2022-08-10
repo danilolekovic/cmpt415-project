@@ -4,27 +4,49 @@ import { Pages } from '../context/Pages'
 import ToastComponent from './ToastComponent'
 import UserLinkComponent from './UserLinkComponent'
 
+/**
+ * The navigation component.
+ * @param {*} props 
+ * @returns HTML for the navigation bar.
+ */
 export default function NavComponent(props) {
+    // Context: user, opened module, page, toast
     const { user, setUser, setOpenedModule, page, setPage, toast, setToast } = useContext(Context)
 
+    /**
+     * Handles the logout button.
+     * @param {*} e 
+     */
     const handleSignOut = (e) => {
         e.preventDefault()
         localStorage.removeItem('auth')
         setUser(null)
     }
 
+    /**
+     * Handles a module being opened.
+     * @param {*} e 
+     */
     const handleModulesClick = (e) => {
         e.preventDefault()
         setOpenedModule(null)
         setPage(Pages.MODULES)
     }
 
+    /**
+     * Handles the user's profile being opened.
+     * @param {*} e 
+     */
     const handleProfileClick = (e) => {
         e.preventDefault()
         setOpenedModule(null)
         setPage(Pages.PROFILE)
     }
 
+    /**
+     * Handles the discussion board being opened.
+     * @param {*} e 
+     */
     const handleDiscussionClick = (e) => {
         e.preventDefault()
         setOpenedModule(null)
@@ -54,6 +76,7 @@ export default function NavComponent(props) {
         </div>
     )
 
+    // Makes the toast disappear after a certain amount of time.
     useEffect(() => {
         setTimeout(() => {
             setToast(null)

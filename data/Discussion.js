@@ -76,6 +76,10 @@ import { getStudentById } from './Students'
     }
 }
 
+/**
+ * Returns a list of all discussions in descending order
+ * @returns {Discussion[]}
+ */
 export async function getDiscussionList() {
     const q = query(collection(db, "discussions"), orderBy("date", "desc"))
 
@@ -102,6 +106,11 @@ function dateToString(date) {
     return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} (${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')})`
 }
 
+/**
+ * Returns a discussion post by its uuid
+ * @param {String} uuid 
+ * @returns Discussion
+ */
 export async function getDiscussionPost(uuid) {
     const q = query(collection(db, "discussions"), where("uuid", "==", uuid))
 
@@ -132,6 +141,12 @@ export async function getDiscussionPost(uuid) {
     }
 }
 
+/**
+ * Adds a discussion post
+ * @param {String} title 
+ * @param {String} content 
+ * @param {String} author 
+ */
 export async function addDiscussionPost(title, content, author) {
     const uuid = uuidv4()
 
@@ -146,6 +161,12 @@ export async function addDiscussionPost(title, content, author) {
     })
 }
 
+/**
+ * Adds a response to a discussion post
+ * @param {String} parent 
+ * @param {String} content 
+ * @param {String} author 
+ */
 export async function addDiscussionReply(parent, content, author) {
     const uuid = uuidv4()
 

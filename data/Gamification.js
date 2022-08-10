@@ -3,6 +3,10 @@ import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
 import { getFriends } from './Students'
 import { Friendship } from '../context/Friendship'
 
+/**
+ * Returns the top 3 students with the highest score
+ * @returns {Promise<Student[]>}
+ */
 export async function getLeaderboard() {
     const q = query(collection(db, "students"), orderBy("score"), limit(3))
     const querySnapshot = await getDocs(q)
@@ -17,6 +21,11 @@ export async function getLeaderboard() {
     })
 }
 
+/**
+ * Returns a leaderboard containing only the students that are friends with the given student
+ * @param {Student} user 
+ * @returns {Promise<Student[]>}
+ */
 export async function getFriendsLeaderboard(user) {
     const [friends, leaderboard] = await Promise.all([
         getFriends(user, Friendship.ACCEPTED),

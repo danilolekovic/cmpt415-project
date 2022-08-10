@@ -1,5 +1,5 @@
 import { db } from '../firebase'
-import { collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, query, where, getDocs, getDoc, setDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { Friendship } from '../context/Friendship'
 
 /**
@@ -149,6 +149,12 @@ export async function giveStudentAchievement(student, achievement) {
     return false
 }
 
+/**
+ * Adds to a student's score
+ * @param {Student} student 
+ * @param {Number} score 
+ * @returns {Boolean} true if score was successfully changed, false otherwise
+ */
 export async function giveStudentScore(student, score) {
     const q = query(collection(db, "students"), where("email", "==", student.email))
 
@@ -168,6 +174,12 @@ export async function giveStudentScore(student, score) {
     return true
 }
 
+/**
+ * Returns ids of all students the user has the status with
+ * @param {Student} student 
+ * @param {Number} status 
+ * @returns {[String]} students with the given relationship status
+ */
 export async function getFriendsIds(student, status) {
     if (status < Friendship.NONE || status > Friendship.REJECTED) {
         return []
@@ -190,6 +202,12 @@ export async function getFriendsIds(student, status) {
     return friends
 }
 
+/**
+ * Returns the students that the user has the status with
+ * @param {Student} student 
+ * @param {Int} status 
+ * @returns {[Student]} students with the given relationship status
+ */
 export async function getFriends(student, status) {
     const friendsIds = await getFriendsIds(student, status)
 
@@ -203,6 +221,13 @@ export async function getFriends(student, status) {
     return friends
 }
 
+/**
+ * Checks if two students share a relationship status
+ * @param {Student} student 
+ * @param {String} friendId 
+ * @param {Number} status 
+ * @returns {Boolean} true if the relationship exists, false otherwise
+ */
 export async function checkFriendship(student, friendId, status) {
     const friendIds = await getFriendsIds(student, status)
 
@@ -211,6 +236,12 @@ export async function checkFriendship(student, friendId, status) {
     return friendIds.includes(friendId)
 }
 
+/**
+ * Sets the relationship status between two students
+ * @param {String} student1 
+ * @param {String} student2 
+ * @param {Number} status 
+ */
 export async function setRelationshipStatus(student1, student2, status) {
     const firstQ = query(collection(db, "relationships"), where("from", "==", student1), where("to", "==", student2))
     const secondQ = query(collection(db, "relationships"), where("from", "==", student2), where("to", "==", student1))
@@ -240,5 +271,16 @@ export async function setRelationshipStatus(student1, student2, status) {
         const firstDoc = firstSnapshot.docs[0].ref
         await updateDoc(firstDoc, { status: status })
         return
+    }
+}
+
+export async function getStudentAnswers(student, question) {
+    const docRef = doc(db, "answers", student.uuid)
+    const docSnap = await getDoc(docRef)
+
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data())
+    } else {
+        console.log("No such document!")
     }
 }

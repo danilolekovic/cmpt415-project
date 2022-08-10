@@ -7,6 +7,48 @@
         {
             "page": 0,
             "name": "Nested Conditionals",
+            "mcqs": [
+                {
+                    "type": "mc",
+                    "id": "nested_conditionals_mc_1",
+                    "question": [
+                        {
+                            "type": "html",
+                            "value": "Will the following code cause an error?"
+                        },
+                        {
+                            "type": "code",
+                            "value": "x = 10\ny = 10\nif x < y:\n    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
+                        }
+                    ],
+                    "answers": [
+                        "No",
+                        "Yes"
+                    ],
+                    "correctAnswerIndex": 0,
+                    "explanation": "This is a legal nested if-else statement. The inner if-else statement is contained completely within the body of the outer else-block."
+                },
+                {
+                    "type": "mc",
+                    "id": "nested_conditionals_mc_2",
+                    "question": [
+                        {
+                            "type": "html",
+                            "value": "Is there a nested conditional in the following code?"
+                        },
+                        {
+                            "type": "code",
+                            "value": "x = 10\ny = 10\nif x < y:\n    print(\"x is less than y\")"
+                        }
+                    ],
+                    "answers": [
+                        "No",
+                        "Yes"
+                    ],
+                    "correctAnswerIndex": 0,
+                    "explanation": "There is a conditional in the code, but it is not nested within another conditional."
+                }
+            ],
             "content": [
                 {
                     "type": "html",
@@ -31,31 +73,36 @@
                     "id": "nested_conditionals_2",
                     "value": "Using nested conditionals, write a program that prints out the following pattern:\n- If x is equal to y, print \"x is equal to y\"\n- If x is greater than y, print \"x is greater than y\"\n- If x and y are equal, print \"x and y must be equal\"",
                     "code": "x = 10\ny = 10\n\nif ({{1:x==y}}):\n    print(\"x is less than y\")\nelse:\n    if {{2:x<y}}:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
-                },
-                {
-                    "type": "mc",
-                    "question": [
-                        {
-                            "type": "html",
-                            "value": "Will the following code cause an error?"
-                        },
-                        {
-                            "type": "code",
-                            "value": "x = 10\ny = 10\nif x < y:\n    print(\"x is less than y\")\nelse:\n    if x > y:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
-                        }
-                    ],
-                    "answers": [
-                        "No",
-                        "Yes"
-                    ],
-                    "correctAnswerIndex": 0,
-                    "explanation": "This is a legal nested if-else statement. The inner if-else statement is contained completely within the body of the outer else-block."
                 }
             ]
         },
         {
             "page": 1,
+            "id": "chained_conditionals_mc_1",
             "name": "Chained Conditionals",
+            "mcqs": [
+                {
+                    "type": "mc",
+                    "id": "chained_conditionals_mc_1",
+                    "question": [
+                        {
+                            "type": "html",
+                            "value": "What will the following code print if x = 3, y = 5, and z = 2?"
+                        },
+                        {
+                            "type": "code",
+                            "value": "if x < y and x < z:\n    print(\"a\")\nelif y < x and y < z:\n    print(\"b\")\nelse:\n    print(\"c\")"
+                        }
+                    ],
+                    "answers": [
+                        "a",
+                        "b",
+                        "c"
+                    ],
+                    "correctAnswerIndex": 2,
+                    "explanation": "Since the first two Boolean expressions are false the else will be executed."
+                }
+            ],
             "content": [
                 {
                     "type": "html",
@@ -90,24 +137,10 @@
                     "value": "x = 10\ny = 10\n\nif x < y:\n    print(\"x is less than y\")\nelif x > y:\n    print(\"x is greater than y\")\nelse:\n    print(\"x and y must be equal\")"
                 },
                 {
-                    "type": "mc",
-                    "question": [
-                        {
-                            "type": "html",
-                            "value": "What will the following code print if x = 3, y = 5, and z = 2?"
-                        },
-                        {
-                            "type": "code",
-                            "value": "if x < y and x < z:\n    print(\"a\")\nelif y < x and y < z:\n    print(\"b\")\nelse:\n    print(\"c\")"
-                        }
-                    ],
-                    "answers": [
-                        "a",
-                        "b",
-                        "c"
-                    ],
-                    "correctAnswerIndex": 2,
-                    "explanation": "Since the first two Boolean expressions are false the else will be executed."
+                    "type": "challenge",
+                    "id": "chained_conditionals_1",
+                    "value": "Using nested conditionals, write a program that prints out the following pattern:\n- If x is less than y, print \"x is less than y\"\n- If x is greater than y, print \"x is greater than y\"\n- If x and y are equal, print \"x and y must be equal\"",
+                    "code": "x = 10\ny = 10\n\nif ({{1:x<y}}):\n    print(\"x is less than y\")\nelse:\n    if {{2:x<y}}:\n        print(\"x is greater than y\")\n    else:\n        print(\"x and y must be equal\")"
                 }
             ]
         }

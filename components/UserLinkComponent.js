@@ -3,6 +3,11 @@ import Context from '../context/Context'
 import { Pages } from '../context/Pages'
 import { getStudentById } from "../data/Students"
 
+/**
+ * Component for a link to a user's profile.
+ * @param {name, uuid, showOwnName} props 
+ * @returns HTML representing a link to a user's profile
+ */
 export default function UserLinkComponent(props) {
     const { user, setPage, setProfileView } = useContext(Context)
     const [displayName, setDisplayName] = useState('')

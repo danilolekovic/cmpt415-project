@@ -8,6 +8,13 @@ import { Friendship } from '../context/Friendship.js'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+/**
+ * Component for the user's own profile.
+ * ToDo: Combine this with StudentProfileComponent.
+ * See StudentProfileComponent for details.
+ * @param {*} props 
+ * @returns HTML for user's own profile
+ */
 export default function ProfileComponent(props) {
     const { user } = useContext(Context)
     const [achievements, setAchievements] = useState([])

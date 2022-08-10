@@ -1,6 +1,11 @@
 import { useContext } from 'react'
 import Context from '../context/Context'
 
+/**
+ * Component for a singular toast notification.
+ * @param {title, message} props 
+ * @returns HTML for a toast notification
+ */
 export default function ToastComponent(props) {
     const { setToast } = useContext(Context)
 

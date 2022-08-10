@@ -4,12 +4,28 @@ import { useFormik } from 'formik'
 import { getDiscussionList, getDiscussionPost, addDiscussionPost, addDiscussionReply } from "../data/Discussion"
 import UserLinkComponent from "./UserLinkComponent"
 
+/**
+ * A discussion component. Contains a list of discussions, an open
+ * discussion and a form to add a new discussion.
+ * @param {*} props 
+ * @returns HTML representation of a discussion list, or an open discussion
+ */
 export default function DiscussionComponent(props) {
+    // Context used: user, toast
     const { user, setToast} = useContext(Context)
+
+    // State representing the list of discussions
     const [discussions, setDiscussions] = useState([])
+
+    // State representing the open discussion, if there is one
     const [currentDiscussion, setCurrentDiscussion] = useState(null)
+
+    // State representing the form for adding a new discussion
     const [posting, setPosting] = useState(false)
 
+    /**
+     * Loads and sets the list of discussions
+     */
     const loadDiscussions = () => {
         getDiscussionList().then(d => {
             setDiscussions(d)
@@ -18,6 +34,10 @@ export default function DiscussionComponent(props) {
         })
     }
 
+    /**
+     * Opens a discussion based on its id
+     * @param {*} uuid 
+     */
     const openDiscussion = (uuid) => {
         getDiscussionPost(uuid).then(p => {
             setCurrentDiscussion(p)
@@ -26,14 +46,21 @@ export default function DiscussionComponent(props) {
         })
     }
 
+    /**
+     * Toggles the form for adding a new post
+     */
     const togglePostForm = () => {
         setPosting(!posting)
     }
 
+    /**
+     * Load the discussions
+     */
     useEffect(() => {
         loadDiscussions()
     }, [])
 
+    // Formik form for adding a new discussion
     const postFormik = useFormik({
         initialValues: {
             title: "",
@@ -42,10 +69,12 @@ export default function DiscussionComponent(props) {
         validate: values => {
             const errors = {}
 
+            // Check if content is empty
             if (!values.content) {
                 errors.content = "Required"
             }
 
+            // Check if title is empty
             if (!values.title) {
                 errors.title = "Required"
             }
@@ -54,7 +83,10 @@ export default function DiscussionComponent(props) {
         },
         onSubmit: values => {
             addDiscussionPost(values.title, values.content, user).then(() => {
+                // Reload the discussions
                 loadDiscussions()
+
+                // Close the form
                 togglePostForm()
 
                 setToast({
@@ -65,6 +97,7 @@ export default function DiscussionComponent(props) {
         }
     })
 
+    // Formik form for adding a new reply
     const responseFormik = useFormik({
         initialValues: {
             content: "",
@@ -72,6 +105,7 @@ export default function DiscussionComponent(props) {
         validate: values => {
             const errors = {}
 
+            // Check if content is empty
             if (!values.content) {
                 errors.content = "Required"
             }
@@ -79,7 +113,9 @@ export default function DiscussionComponent(props) {
             return errors
         },
         onSubmit: values => {
+            // Add the reply
             addDiscussionReply(currentDiscussion.uuid, values.content, user).then(() => {
+                // Reload the discussion
                 openDiscussion(currentDiscussion.uuid)
 
                 setToast({
@@ -92,6 +128,7 @@ export default function DiscussionComponent(props) {
         }
     })
 
+    // Render the list of discussions
     if (currentDiscussion !== null) {
         return (
             <div className="container mx-auto">
@@ -142,6 +179,7 @@ export default function DiscussionComponent(props) {
             </div>
         )
     } else {
+        // Render the "new post" form
         let form = (<div className="col-md-12 text-center">
             <button className="btn btn-primary" onClick={togglePostForm}>New Post</button>
         </div>)
@@ -175,6 +213,7 @@ export default function DiscussionComponent(props) {
             return form
         }
 
+        // Render the opened discussion
         return (
             <div className="container mx-auto">
                 <h3>Discussion</h3>

@@ -1,30 +1,118 @@
 import { useEffect, useState, useContext, memo } from 'react'
-import { checkStudentHasAchievement, giveStudentAchievement } from '../data/Students'
-import { Personalization, getPersonalization } from "../data/Personalization"
+import { giveStudentScore, getStudentAnswers } from '../data/Students'
+import { getPersonalization } from "../data/Personalization"
+import PersonalizationComponent from './PersonalizationComponent'
+import { useFormik } from 'formik'
 import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+/**
+ * Component for a module's contents and multiple choice questions.
+ * @param {*} props 
+ * @returns HTML for a module's contents.
+ */
 function OpenModuleComponent(props) {
     const moduleJson = props.file.json
-    const { user, setUser, setToast, setEditorState, challengeData, setChallengeData, personalization, setPersonalization } = useContext(Context)
+
+    // Context: user, editor state, challenge data, personalization, toast
+    const { user, setEditorState, setChallengeData, personalization, setPersonalization, setToast } = useContext(Context)
+
+    // State for the module's contents
     const [elements, setElements] = useState([])
-    const [mcQuestionNumber, setMcQuestionNumber] = useState(0)
-    const [answeredMcQuestions, setAnsweredMcQuestions] = useState([])
+
+    // State for the current page of the module
     const [currentPage, setCurrentPage] = useState(0)
+
+    // State for pagination HTML
     const [pagination, setPagination] = useState([])
+
+    // State for estimated lesson time
     const [lessonTime, setLessonTime] = useState('')
+
+    // State for lecture visibility
     const [showLecture, setShowLecture] = useState(false)
 
-    let createdChallengeBlock = false
+    // State for multiple choice questions
+    const [questions, setQuestions] = useState([])
 
+    // State for the currently open multiple choice question
+    const [currentQuestion, setCurrentQuestion] = useState(0)
+
+    // State for the current explanation for the multiple choice question
+    const [currentExplanation, setCurrentExplanation] = useState('')
+
+    // State for incorrect questions
+    const [wrongQuestions, setWrongQuestions] = useState(0)
+
+    // State for personalization (lecture visibility, etc.)
+    const [showPersonalization, setShowPersonalization] = useState(null)
+
+    // Load personalization
     useEffect(() => {
         getPersonalization(user.uuid).then(p => {
             setPersonalization(p)
         })
     }, [])
 
+    // Load module contents
+    useEffect(() => {
+        handleModuleStart()
+        calculateLessonTime()
+        handlePagination()
+    }, [currentPage])
+
+    useEffect(() => {
+        handleModuleStart()
+        calculateLessonTime()
+        handlePagination()
+    }, [showLecture])
+
+    useEffect(() => {
+        retrieveStudentAnswers()
+    }, [currentQuestion])
+
+    // Formik form for multiple choice questions
+    const formik = useFormik({
+        initialValues: {
+            prompt: '',
+            options: [],
+            picked: '',
+            explanation: '',
+        },
+        onSubmit: values => {
+            const pick = values.picked
+
+            if (pick === String(questions[currentQuestion].correctAnswerIndex)) {
+                setCurrentExplanation("✓ " + questions[currentQuestion].explanation)
+
+                setToast({
+                    title: "Correct!",
+                    message: "⭐ +50 score"
+                })
+
+                giveStudentScore(user, 50)
+                values.picked = ''
+            } else {
+                if (values.options.length > 2) {
+                    formik.setSubmitting(false)
+                }
+
+                setCurrentExplanation("❌ " + questions[currentQuestion].explanation)
+                setWrongQuestions(wrongQuestions + 1)
+
+                if (wrongQuestions + 1 >= questions.length && showPersonalization === null) {
+                    setShowPersonalization(true)
+                }
+            }
+        },
+    })
+
+    /**
+     * Returns the current page's module contents.
+     * @returns HTML for the module's contents.
+     */
     const getCurrentPageBody = () => {
         const currentPageBody = moduleJson.body.find(body => body.page === currentPage)
 
@@ -35,6 +123,24 @@ function OpenModuleComponent(props) {
         return []
     }
 
+    /**
+     * Returns the current page's multiple choice questions
+     * @returns Multiple choice questions HTML
+     */
+    const getCurrentPageMcqs = () => {
+        const currentPageObject = moduleJson.body.find(body => body.page === currentPage)
+
+        if (currentPageObject) {
+            return currentPageObject.mcqs
+        }
+
+        return []
+    }
+
+    /**
+     * @param {Number} page 
+     * @returns {String} title of page
+     */
     const getPageTitle = (page) => {
         const pageTitle = moduleJson.body.find(body => body.page === page)
 
@@ -45,6 +151,10 @@ function OpenModuleComponent(props) {
         return '...'
     }
 
+    /**
+     * Handles a page change.
+     * @param {Number} page 
+     */
     const handlePageChange = (page) => {
         if (page < 0) {
             page = 0
@@ -54,9 +164,25 @@ function OpenModuleComponent(props) {
             page = moduleJson.body.length - 1
         }
 
+        setShowLecture(false)
+        setWrongQuestions(0)
+        setCurrentQuestion(0)
+        refreshFormik()
         setCurrentPage(page)
     }
 
+    /**
+     * Refreshes the Formik form.
+     */
+    const refreshFormik = () => {
+        formik.resetForm()
+        formik.setFieldValue('picked', '')
+        setCurrentExplanation('')
+    }
+
+    /**
+     * Handles the pagination.
+     */
     const handlePagination = () => {
         const pageList = []
 
@@ -106,11 +232,13 @@ function OpenModuleComponent(props) {
         setPagination(pageList)
     }
 
+    /**
+     * Handles a module being started.
+     */
     const handleModuleStart = () => {
         // Parse the module's body
         const moduleBody = getCurrentPageBody()
         let divs = []
-        let allChallenges = []
         let incompleteChallenges = []
 
         if (personalization === null) {
@@ -135,6 +263,23 @@ function OpenModuleComponent(props) {
             divs.push(transformJsonToHtml(moduleBody, i, showLecture))
         }
 
+        const mcqs = getCurrentPageMcqs()
+        const tempQuestions = []
+
+        for (let i = 0; i < mcqs.length; i++) {
+            const mcq = mcqs[i]
+            const question = {
+                id: mcq.id,
+                question: mcq.question,
+                answers: mcq.answers,
+                correctAnswerIndex: mcq.correctAnswerIndex,
+                explanation: mcq.explanation,
+            }
+
+            tempQuestions.push(question)
+        }
+
+        setQuestions(tempQuestions)
         setElements(divs)
 
         const randomChallenge = incompleteChallenges[Math.floor(Math.random() * incompleteChallenges.length)]
@@ -146,6 +291,10 @@ function OpenModuleComponent(props) {
         })
     }
 
+    /**
+     * Opens a coding challenge. Can be easy or hard.
+     * @param {Number} editorType 
+     */
     const openCodingChallenge = (editorType) => {
         if (editorType < 0)
             editorType = 0
@@ -156,44 +305,9 @@ function OpenModuleComponent(props) {
         setEditorState(editorType)
     }
 
-    const handleMcAnswer = (e, index, correctAnswerIndex, explanation) => {
-        if (e.target.checked) {
-            const name = e.target.name
-
-            if (answeredMcQuestions.includes(name)) {
-                return
-            }
-
-            if (index === correctAnswerIndex) {
-                e.target.style = 'background-color: green'
-                e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- correct! ' + explanation
-
-                checkStudentHasAchievement(user, 1).then(res => {
-                    if (!res && !user.achievements.includes(1)) {
-                        giveStudentAchievement(user, 1).then(res => {
-                            // Temporary
-                            // ToDo: actually give the student the achievement
-                            setUser({
-                                ...user,
-                                achievements: [...user.achievements, 1]
-                            })
-
-                            setToast({
-                                title: 'Achievement unlocked',
-                                message: 'You answered a MC question correctly!'
-                            })
-                        })
-                    }
-                })
-            } else {
-                e.target.style = 'background-color: red'
-                e.target.nextSibling.innerHTML = e.target.nextSibling.innerHTML + ' -- incorrect! ' + explanation
-            }
-
-            setAnsweredMcQuestions([...answeredMcQuestions, name])
-        }
-    }
-
+    /**
+     * Estimates the time it takes to read the lecture notes.
+     */
     const calculateLessonTime = () => {
         let text = ''
 
@@ -211,6 +325,12 @@ function OpenModuleComponent(props) {
         setLessonTime(time + " minute(s)")
     }
     
+    /**
+     * Returns all challenges in the module.
+     * @param {[String]} moduleBody 
+     * @param {Number} index 
+     * @returns Challenges object
+     */
     const loadAllChallenges = (moduleBody, index) => {
         const element = moduleBody[index]
 
@@ -227,6 +347,48 @@ function OpenModuleComponent(props) {
         return null
     }
 
+    /**
+     * Sets the module's personalization
+     * @param {*} value 
+     */
+    const setModulePersonalization = (value) => {
+        if (value) {
+            setShowLecture(value)
+            setShowPersonalization(false)
+            handleModuleStart()
+            setCurrentPage(currentPage)
+        } else {
+            setShowPersonalization(false)
+        }
+    }
+
+    /**
+     * Retrieves student answers (INCOMPLETE)
+     */
+    const retrieveStudentAnswers = () => {
+        const q = questions[currentQuestion]
+
+        if (!q) {
+            return
+        }
+
+        console.log("Getting q: " + q.id)
+
+        getStudentAnswers(user, q.id).then(answers => {
+            console.log(answers)
+            // ToDo: Load saved answers into Formik
+            //formik.picked = answers.answers[0] | ''
+            //formik.isSubmitting = true
+        })
+    }
+
+    /**
+     * Transforms the module json to html.
+     * @param {Object} moduleBody 
+     * @param {Number} index 
+     * @param {Boolean} addContent 
+     * @returns HTML representation of JSON elements in module.
+     */
     const transformJsonToHtml = (moduleBody, index, addContent) => {
         let divs = []
 
@@ -259,49 +421,6 @@ function OpenModuleComponent(props) {
             )
         }
 
-        if (element['type'] === 'mc') {
-            const mcBody = element['question']
-            const mcAnswers = element['answers']
-            const correctAnswer = element['correctAnswerIndex']
-            const explanation = element['explanation']
-            const mcDivs = []
-            const mcAnswerDivs = []
-
-            for (let i = 0; i < mcBody.length; i++) {
-                mcDivs.push(transformJsonToHtml(mcBody, i, true))
-            }
-
-            setMcQuestionNumber(mcQuestionNumber + 1)
-
-            for (let i = 0; i < mcAnswers.length; i++) {
-                const checkBoxCombo = []
-
-                checkBoxCombo.push(
-                    <input type="radio" className="form-check-input" name={`mcq-${mcQuestionNumber}-${i}`} value={i} onChange={e => handleMcAnswer(e, i, correctAnswer, explanation)} />
-                )
-
-                checkBoxCombo.push(
-                    <label className="form-check-label" for={`mcq-${mcQuestionNumber}-${i}`}>{mcAnswers[i]}</label>
-                )
-
-                mcAnswerDivs.push(
-                    <div className="form-check">
-                        {checkBoxCombo}
-                    </div>
-                )
-            }
-            
-            divs.push(
-                <div id="mc-question-box">
-                    <h3>Multiple-Choice Question</h3>
-                    {mcDivs}
-                    <div>
-                        {mcAnswerDivs}
-                    </div>
-                </div>
-            )
-        }
-
         // If the element is a image element, add it to the html
         if (element['type'] === 'image' && addContent) {
             divs.push(
@@ -311,30 +430,82 @@ function OpenModuleComponent(props) {
             )
         }
 
-        if (addContent) {
-            divs.push(
-                <br />
-            )
-        }
-
         return divs
     }
 
-    useEffect(() => {
-        handleModuleStart()
-        calculateLessonTime()
-        handlePagination()
-    }, [currentPage])
+    /**
+     * Goes to the next multiple choice question.
+     */
+    const nextQuestion = () => {
+        if (currentQuestion + 1 > questions.length) {
+            return
+        }
+
+        setCurrentQuestion(currentQuestion + 1)
+        refreshFormik()
+    }
 
     if (elements.length === 0) {
         return (<Skeleton count={5}></Skeleton>)
+    }
+
+    let questionsForm = null
+
+    if (questions.length > 0 && currentQuestion < questions.length) {
+        questionsForm = (
+            <div id="mc-question-box">
+                <h3>Multiple-Choice Question</h3>
+                <button className="btn btn-primary" hidden={!formik.isSubmitting || currentQuestion + 1 >= questions.length} onClick={nextQuestion}>Next question</button>
+                <form onSubmit={formik.handleSubmit}>
+                    {
+                        questions[currentQuestion].question.map((q, index) => {
+                            if (q.type === "code") {
+                                return (
+                                    <SyntaxHighlighter language="python">
+                                        {q.value}
+                                    </SyntaxHighlighter>
+                                )
+                            } else {
+                                return (
+                                    <p>{q.value}</p>
+                                )
+                            }
+                        })
+                    }
+                    <br />
+                    <div className="row">
+                        <div className="col">
+                            <div role="group">
+                            {
+                                questions[currentQuestion].answers.map((q, index) => {
+                                    return (
+                                        <div key={index} className="radio-group">
+                                            <input type="radio" className="form-check-input" disabled={formik.isSubmitting} name="picked" value={index} onChange={formik.handleChange} />
+                                            <span className="form-check-label">{q}</span>
+                                        </div>
+                                    )
+                                })
+                            }
+                            </div>
+                            <br />
+                            <button className="btn btn-success btn-lg btn-block" type="submit" disabled={formik.isSubmitting}>Submit</button>
+                        </div>
+                        <div className="col">
+                            <p>{currentExplanation !== "" ? currentExplanation : ""}</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        )
     }
 
     return (
         <div>
             <h2>{getPageTitle(currentPage)}</h2>
             <h6>Lesson {currentPage + 1}/{moduleJson.body.length} &middot; Estimated time to complete lesson: {lessonTime}</h6>
+            {showPersonalization ? <PersonalizationComponent onClickYes={_ => setModulePersonalization(true)} onClickNo={_ => setModulePersonalization(false)} message="Do you want to see some lecture material on this topic?" /> : <></>}
             {elements}
+            {questionsForm}
             <div className="code-challenge-box">
                     <h3>Coding Challenge</h3>
                     <p>Would you like to start a coding challenge? Completing a coding challenge is optional, but can earn you achievements and/or points.</p>

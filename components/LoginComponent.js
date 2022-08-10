@@ -7,9 +7,13 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswor
 import { auth } from '../firebase'
 import { v4 } from 'uuid'
 
+/**
+ * The login and signup component
+ * @param {*} props 
+ * @returns HTML for login/signup components
+ */
 function LoginComponent(props) {
     const [signUp, setSignUp] = useState(false)
-    const [loaded, setLoaded] = useState(false)
 
     const signUpNameRef = useRef(null)
     const signUpEmailRef = useRef(null)
@@ -19,7 +23,7 @@ function LoginComponent(props) {
     const signInEmailRef = useRef(null)
     const signInPasswordRef = useRef(null)
 
-    const { user, setUser } = useContext(Context)
+    const { setUser } = useContext(Context)
 
     /**
      * Validates the input contents for the sign up form

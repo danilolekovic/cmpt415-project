@@ -7,10 +7,11 @@ import { collection, getDocs, query, where, updateDoc } from 'firebase/firestore
  * @typedef {Object} Personalization
  */
  export class Personalization {
-    constructor(uuid, leaderboards, challenges) {
+    constructor(uuid, leaderboards, challenges, shownModules) {
         this.uuid = uuid
         this.leaderboards = leaderboards
         this.challenges = challenges
+        this.shownModules = shownModules
     }
 }
 
@@ -23,18 +24,19 @@ const personalizationConverter = {
         return {
             uuid: p.uuid,
             leaderboards: p.leaderboards,
-            challenges: p.challenges
+            challenges: p.challenges,
+            shown_modules: p.shownModules
         }
     },
     fromFirestore: function (snapshot, options) {
         const data = snapshot.data(options)
-        return new Personalization(data.uuid, data.leaderboards, data.challenges)
+        return new Personalization(data.uuid, data.leaderboards, data.challenges, data.shown_modules)
     }
 }
 
 /**
  * Returns a student's preferences by uuid
- * @param {string} uuid 
+ * @param {String} uuid 
  * @returns Personalization
  */
  export async function getPersonalization(uuid) {
@@ -49,6 +51,12 @@ const personalizationConverter = {
     return personalizationConverter.fromFirestore(querySnapshot.docs[0], { idField: "uuid" })
 }
 
+/**
+ * Changes a users preferences
+ * @param {String} uuid 
+ * @param {Object} value 
+ * @returns {Boolean} true if the update was successful, false otherwise
+ */
 export async function changePersonalization(uuid, value) {
     const q = query(collection(db, "personalization"), where("uuid", "==", uuid))
 

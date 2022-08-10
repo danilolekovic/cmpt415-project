@@ -5,12 +5,27 @@ import achievementsJson from '../data/achievements.json'
 import { checkFriendship, setRelationshipStatus, getFriends } from '../data/Students.js'
 import { Friendship } from '../context/Friendship.js'
 
+/**
+ * Component for a user's profile.
+ * @param {*} props 
+ * @returns HTML representing a user's profile
+ */
 export default function StudentProfileComponent(props) {
+    // Using context: user, profile view, toast
     const { user, profileView, setToast } = useContext(Context)
+
+    // State for the user's achievements
     const [achievements, setAchievements] = useState([])
+
+    // State for the user's relationship with the student
     const [relationship, setRelationship] = useState((<></>))
+
+    // State for the user's friends
     const [friends, setFriends] = useState([])
 
+    /**
+     * Loads user's achievements.
+     */
     const loadAchievements = () => {
         const studentAchievements = profileView.achievements
         const achievements = achievementsJson.achievements.filter(a => studentAchievements.includes(a.id))
@@ -20,6 +35,10 @@ export default function StudentProfileComponent(props) {
         }))
     }
 
+    /**
+     * Updates the user's relationship with the student.
+     * @param {Number} newStatus 
+     */
     const changeFriendship = (newStatus) => {
         setRelationshipStatus(user.uuid, profileView.uuid, newStatus).then(() => {
             loadRelationship()
@@ -28,6 +47,9 @@ export default function StudentProfileComponent(props) {
         })
     }
 
+    /**
+     * Loads the user's relationship with the student.
+     */
     const loadRelationship = () => {
         let friendshipHasUpdated = false
         
@@ -66,6 +88,9 @@ export default function StudentProfileComponent(props) {
         })
     }
 
+    /**
+     * Gets a list of the user's friends.
+     */
     const getFriendsList = () => {
         getFriends(profileView, Friendship.ACCEPTED).then(f => {
             if (f.length === 0) {

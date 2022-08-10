@@ -4,20 +4,40 @@ import { Personalization, changePersonalization } from '../data/Personalization'
 import Context from '../context/Context'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 
+/**
+ * The "easy" editor component -- fill-in-the-blank code questions.
+ * @param {*} props 
+ * @returns HTML for the easy editor.
+ */
 export default function EasyEditorComponent(props) {
-    const { user, setEditorState, setToast, challengeData, setChallengeData, personalization, setPersonalization } = useContext(Context)
+    // Context used: user, editor state, toast, challenge data, personalization
+    const { user, setEditorState, setToast, challengeData, personalization, setPersonalization } = useContext(Context)
+
+    // State representing the code prompt
     const [prompt, setPrompt] = useState([])
+
+    // State representing the code
     const [code, setCode] = useState(challengeData.code + "")
+
+    // State representing the list of tasks in the prompt
     const [list, setList] = useState([])
+
+    // State representing the answers to the prompts
     const [answers, setAnswers] = useState([])
+
+    // State representing the completion status
     const [completed, setCompleted] = useState(false)
+
+    // State representing the Formik form for filling in the blanks
     const [formikJson, setFormikJson] = useState({})
 
+    // Creates the Formik form for filling in the blanks
     const formik = useFormik({
         initialValues: formikJson,
         onSubmit: values => {
             const valuesAsArray = Object.keys(values).map(key => values[key])
 
+            // Check if the answers are empty
             if (valuesAsArray.length !== answers.length) {
                 alert("Error occurred.")
                 return
@@ -26,6 +46,7 @@ export default function EasyEditorComponent(props) {
             const newCode = code + ""
             let wrongAnswers = []
 
+            // Check if the answers are correct
             for (let i = 0; i < valuesAsArray.length; i++) {
                 if (valuesAsArray[i] !== answers[i]) {
                     wrongAnswers.push(i)
@@ -36,6 +57,7 @@ export default function EasyEditorComponent(props) {
 
             setCode(newCode)
 
+            // Let the user know if the answers are wrong
             if (wrongAnswers.length > 0) {
                 setToast({
                     title: "Wrong Answer",
@@ -50,11 +72,15 @@ export default function EasyEditorComponent(props) {
                 message: "You have completed the exercise. ⭐ +100 score"
             })
 
-            // Update personalization
-            const newChallenges = [...personalization.challenges, challengeData.id]
-            const newPersonalization = new Personalization(personalization.uuid, personalization.leaderboards, newChallenges)
-            setPersonalization(newPersonalization)
-            changePersonalization(user.uuid, newPersonalization)
+            // ToDo: add +100 score
+
+            if (personalization !== null && personalization.challenges !== null) {
+                // Update personalization
+                const newChallenges = [...personalization.challenges, challengeData.id]
+                const newPersonalization = new Personalization(personalization.uuid, personalization.leaderboards, newChallenges, personalization.shownModules)
+                setPersonalization(newPersonalization)
+                changePersonalization(user.uuid, newPersonalization)
+            }
 
             setCompleted(true)
         },
@@ -64,6 +90,10 @@ export default function EasyEditorComponent(props) {
         setCode(challengeData.code)
     }, [])
 
+    /**
+     * Converts the prompt into a list of tasks.
+     * @param {*} questionPrompt 
+     */
     const convertPromptIntoList = (questionPrompt) => {
         // break questionPrompt into lines
         const lines = questionPrompt.split('\n')
@@ -77,6 +107,9 @@ export default function EasyEditorComponent(props) {
         setPrompt(newList)
     }
 
+    /**
+     * Closes the editor.
+     */
     const closeCodingChallenge = () => {
         setEditorState(0)
     }
@@ -85,6 +118,9 @@ export default function EasyEditorComponent(props) {
         convertPromptIntoList(challengeData.question)
     }, [])
 
+    /**
+     * Converts the code into a syntax highlighted area.
+     */
     const convertCodeToSyntaxArea = () => {
         // match all the {{#:x}}
         const regex = /{{(\d+):(.*?)}}/g
