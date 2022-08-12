@@ -105,7 +105,7 @@ NEXT_PUBLIC_RAPIDAPI_KEY=
 Add the corresponding keys after the ‘=‘ for each line. For example, if my RapidAPI key is `e579b80725p12js14873fmsh9ad7d0052d2d8n3f0b383210e5`, I would change the last line to:
 
 ```
-NEXT_PUBLIC_RAPIDAPI_KEY= e579b80725p12js14873fmsh9ad7d0052d2d8n3f0b383210e5
+NEXT_PUBLIC_RAPIDAPI_KEY=e579b80725p12js14873fmsh9ad7d0052d2d8n3f0b383210e5
 ```
 
 ## Running
