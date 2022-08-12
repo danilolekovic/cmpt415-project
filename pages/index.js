@@ -76,7 +76,7 @@ export default function Home() {
       </Context.Provider>
     )
   } else {
-    if (loading) {
+    if (loading && user) {
       return (
         <Context.Provider value={contexts}>
           <NavComponent />
